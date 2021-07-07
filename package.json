@@ -14,7 +14,9 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "core-js": "^3.15.1",
+    "dat.gui": "^0.7.7",
     "nuxt": "^2.15.7",
+    "three": "^0.130.1",
     "vuetify": "^2.5.5"
   },
   "devDependencies": {

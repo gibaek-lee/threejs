@@ -83,7 +83,7 @@
       :absolute="!fixed"
       app
     >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <span>&copy; {{ new Date().getFullYear() }} Gibaek Lee. Web Frontend Developer</span>
     </v-footer>
   </v-app>
 </template>
@@ -105,6 +105,11 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Inspire',
           to: '/inspire'
+        },
+        {
+          icon: 'mdi-lifebuoy',
+          title: 'Threejs',
+          to: '/threejs'
         }
       ],
       miniVariant: false,
@@ -115,3 +120,16 @@ export default {
   }
 }
 </script>
+
+<style>
+html {
+  overflow: hidden;
+}
+</style>
+
+<style lang="scss" scoped>
+.container {
+  max-width: 100%;
+  height: 100%;
+}
+</style>
