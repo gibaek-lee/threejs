@@ -122,7 +122,8 @@ export default {
 </script>
 
 <style>
-html {
+html,
+body {
   overflow: hidden;
 }
 </style>
