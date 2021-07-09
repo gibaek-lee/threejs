@@ -18,22 +18,35 @@
 </template>
 
 <script>
+import { defineComponent, ref, provide } from '@nuxtjs/composition-api'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import * as THREE from 'three'
 import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { lights } from '@business/threejs/hauntedHouse'
+import { useFloor, useHouse, useGhost } from '@composables/threejs/hauntedHouse'
 
-export default {
+export default defineComponent({
   name: 'Threejs',
+  setup () {
+    const scene = ref(null)
+
+    provide(scene)
+
+    return {
+      scene
+    }
+  },
   data () {
     return {
       canvas: null,
-      scene: null,
       renderer: null,
       clock: null,
       orbitControl: null,
-      camera: null,
-      datGUI: null,
+      cameraOrbit: null,
+      cameraGhost: null,
+      me: null,
+      gui: null,
       axesHelper: null,
       textureLoader: null
     }
@@ -41,7 +54,7 @@ export default {
   computed: {
     ...mapGetters('threejs', {
     }),
-    sizes () {
+    windowSizes () {
       return {
         width: window.innerWidth,
         height: window.innerHeight
@@ -49,11 +62,11 @@ export default {
     },
     isInit () {
       return !!this.orbitControl &&
-            !!this.renderer &&
-            !!this.scene &&
-            !!this.camera
+             !!this.renderer &&
+             !!this.scene &&
+             !!this.cameraOrbit
     },
-    targetDomUpdateMode () {
+    targetDomChangeCameraMode () {
       return this.$el.querySelector('.change-update-mode')
     }
   },
@@ -66,23 +79,39 @@ export default {
         return
       }
 
-      this.addMeshFloor()
+      // run init must once in a scene
+      if (!this.clock) {
+        // add meshes on scene
+        this.scene.add(this.axesHelper, this.cameraOrbit)
 
-      this.clock = new THREE.Clock()
-      this.tick()
+        lights.addOnScene(this.scene, this.gui)
+
+        useFloor(this.scene)
+
+        const { tensorHouseGroup } = useHouse(this.scene, this.gui)
+
+        const { me, cameraGhost } = useGhost(this.scene, tensorHouseGroup, this.windowSizes)
+        this.me = me
+        this.cameraGhost = cameraGhost
+
+        // event
+        this.addEventCameraModeChange()
+
+        // render scene repeat
+        this.clock = new THREE.Clock()
+        this.tick()
+      }
     }
-  },
-  created () {
   },
   mounted () {
     window.addEventListener('resize', () => {
-      this.sizes.width = window.innerWidth
-      this.sizes.height = window.innerHeight
+      this.windowSizes.width = window.innerWidth
+      this.windowSizes.height = window.innerHeight
 
-      this.camera.aspect = this.sizes.width / this.sizes.height
-      this.camera.updateProjectionMatrix()
+      this.cameraOrbit.aspect = this.windowSizes.width / this.windowSizes.height
+      this.cameraOrbit.updateProjectionMatrix()
 
-      this.renderer.setSize(this.sizes.width, this.sizes.height)
+      this.renderer.setSize(this.windowSizes.width, this.windowSizes.height)
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     })
 
@@ -94,53 +123,61 @@ export default {
     ...mapActions('threejs', {
     }),
     init () {
-      this.datGUI = new dat.GUI({ closed: true, width: 350 })
+      this.gui = new dat.GUI({ closed: true, width: 350 })
       this.scene = new THREE.Scene()
-      this.axesHelper = new THREE.AxesHelper(1)
 
-      this.camera = new THREE.PerspectiveCamera(75, this.sizes.width / this.sizes.height, 0.1, 200)
-      this.camera.position.set(4, 20, 60)
+      this.axesHelper = new THREE.AxesHelper(1)
+      this.axesHelper.position.x = 2.01
+      this.axesHelper.position.y = 0.01
+      this.axesHelper.position.z = 2.01
+
+      this.cameraOrbit = new THREE.PerspectiveCamera(75, this.windowSizes.width / this.windowSizes.height, 0.1, 200)
+      this.cameraOrbit.position.set(4, 20, 60)
 
       this.textureLoader = new THREE.TextureLoader()
 
       this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas })
-      this.renderer.setSize(this.sizes.width, this.sizes.height)
+      this.renderer.setSize(this.windowSizes.width, this.windowSizes.height)
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       this.renderer.setClearColor('#262837')
 
-      this.orbitControl = new OrbitControls(this.camera, this.canvas)
+      this.orbitControl = new OrbitControls(this.cameraOrbit, this.canvas)
       this.orbitControl.enableDamping = true
-
-      this.scene.add(this.axesHelper, this.camera)
     },
     tick () {
       const elapsedTime = this.clock.getElapsedTime()
 
-      const { mode } = this.targetDomUpdateMode.dataset
-      if (mode === 'orbit') {
-        this.orbitControl.update()
-        this.renderer.render(this.scene, this.camera)
-      } else if (mode === 'keypress') {
-        // camera2.lookAt(me.position)
-        // this.renderer.render(scene, camera2)
+      const { mode } = this.targetDomChangeCameraMode.dataset
+
+      switch (mode) {
+        case 'orbit':
+          this.orbitControl.update()
+          this.renderer.render(this.scene, this.cameraOrbit)
+          break
+        case 'keypress':
+          this.cameraGhost.lookAt(this.me.position)
+          this.renderer.render(this.scene, this.cameraGhost)
       }
 
       window.requestAnimationFrame(this.tick)
     },
-    addMeshFloor () {
-      const NUM_PLANES = 4
-      const BASE_WIDHT_PLANE = 20
-      const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(BASE_WIDHT_PLANE * NUM_PLANES, BASE_WIDHT_PLANE * NUM_PLANES),
-        new THREE.MeshStandardMaterial({ color: '#a9c388' })
-      )
-      floor.rotation.x = -Math.PI * 0.5
-      floor.position.y = 0
+    addEventCameraModeChange () {
+      this.targetDomChangeCameraMode.addEventListener('click', (event) => {
+        const EMode = { orbit: 'orbit', keypress: 'keypress' }
+        const { target } = event
+        const { mode } = target.dataset
 
-      this.scene.add(floor)
+        if (mode === EMode.orbit) {
+          target.dataset.mode = EMode.keypress
+        } else if (mode === EMode.keypress) {
+          target.dataset.mode = EMode.orbit
+        }
+
+        target.innerText = target.dataset.mode
+      })
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,12 @@
+import { resolve } from 'path'
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  alias: {
+    '@utils': resolve(__dirname, './utils'),
+    '@composables': resolve(__dirname, './composables'),
+    '@business': resolve(__dirname, './business')
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
@@ -41,7 +47,8 @@ export default {
     // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
     // https://go.nuxtjs.dev/vuetify
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
+    '@nuxtjs/composition-api/module'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
