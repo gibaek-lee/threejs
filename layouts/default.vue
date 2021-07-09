@@ -103,12 +103,12 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          title: 'Music Visualizer',
+          to: '/music-visualizer'
         },
         {
           icon: 'mdi-lifebuoy',
-          title: 'hauntedHouse',
+          title: 'Haunted House',
           to: '/haunted-house'
         }
       ],

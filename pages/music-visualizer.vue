@@ -1,16 +1,12 @@
 <template>
   <v-row>
     <v-col class="text-center">
-      <img
-        src="/threejs/v.png"
-        alt="Vuetify.js"
-        class="mb-5"
-      >
+      <ThreejsLogo />
       <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
+        &#8220;Coming soon&#8221;
         <footer>
           <small>
-            <em>&mdash;John Johnson</em>
+            <em>&mdash;Gibaek Lee</em>
           </small>
         </footer>
       </blockquote>
