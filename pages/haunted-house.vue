@@ -6,9 +6,9 @@
         color="primary"
         dark
         class="change-update-mode"
-        data-mode="orbit"
+        @click="onChangeCameraControlMode"
       >
-        orbit
+        {{ cameraControlMode }}
       </v-btn>
     </v-col>
     <v-col class="col-canvas">
@@ -25,6 +25,8 @@ import * as dat from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { lights } from '@business/threejs/hauntedHouse'
 import { useFloor, useHouse, useGhost } from '@composables/threejs/hauntedHouse'
+
+const EMode = { orbit: 'orbit', keypress: 'keypress' }
 
 export default defineComponent({
   name: 'Threejs',
@@ -43,6 +45,7 @@ export default defineComponent({
       renderer: null,
       clock: null,
       orbitControl: null,
+      cameraControlMode: 'orbit',
       cameraOrbit: null,
       cameraGhost: null,
       me: null,
@@ -65,9 +68,6 @@ export default defineComponent({
              !!this.renderer &&
              !!this.scene &&
              !!this.cameraOrbit
-    },
-    targetDomChangeCameraMode () {
-      return this.$el.querySelector('.change-update-mode')
     }
   },
   watch: {
@@ -93,9 +93,6 @@ export default defineComponent({
         const { me, cameraGhost } = useGhost(this.scene, tensorHouseGroup, this.windowSizes)
         this.me = me
         this.cameraGhost = cameraGhost
-
-        // event
-        this.addEventCameraModeChange()
 
         // render scene repeat
         this.clock = new THREE.Clock()
@@ -147,34 +144,27 @@ export default defineComponent({
     tick () {
       const elapsedTime = this.clock.getElapsedTime()
 
-      const { mode } = this.targetDomChangeCameraMode.dataset
-
-      switch (mode) {
-        case 'orbit':
+      switch (this.cameraControlMode) {
+        case EMode.orbit:
           this.orbitControl.update()
           this.renderer.render(this.scene, this.cameraOrbit)
           break
-        case 'keypress':
+        case EMode.keypress:
           this.cameraGhost.lookAt(this.me.position)
           this.renderer.render(this.scene, this.cameraGhost)
       }
 
       window.requestAnimationFrame(this.tick)
     },
-    addEventCameraModeChange () {
-      this.targetDomChangeCameraMode.addEventListener('click', (event) => {
-        const EMode = { orbit: 'orbit', keypress: 'keypress' }
-        const { target } = event
-        const { mode } = target.dataset
-
-        if (mode === EMode.orbit) {
-          target.dataset.mode = EMode.keypress
-        } else if (mode === EMode.keypress) {
-          target.dataset.mode = EMode.orbit
-        }
-
-        target.innerText = target.dataset.mode
-      })
+    onChangeCameraControlMode () {
+      switch (this.cameraControlMode) {
+        case EMode.orbit:
+          this.cameraControlMode = EMode.keypress
+          break
+        case EMode.keypress:
+          this.cameraControlMode = EMode.orbit
+          break
+      }
     }
   }
 })

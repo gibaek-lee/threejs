@@ -2,73 +2,62 @@
   <v-row justify="center" align="center">
     <v-col cols="12" sm="8" md="6">
       <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
+        <ThreejsLogo />
       </v-card>
       <v-card>
         <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
+          Welcome to the Three.js playground
         </v-card-title>
         <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
           <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
+            Author: <em>Gibaek Lee</em>
+          </p>
+          <p>
+            For more information on me, check out the <a
+              href="https://www.linkedin.com/in/gibaeklee/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              documentation
+              LinkedIn Profile
             </a>.
           </p>
           <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
+            If you have questions, please mail to <a
+              href="mailto:bbsnake10@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
-              title="chat"
+              title="mailto"
             >
-              discord
+              My GMail
             </a>.
           </p>
           <p>
             Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
+              href="https://github.com/gibaek-lee/threejs/issues"
               target="_blank"
               rel="noopener noreferrer"
               title="contribute"
             >
-              issue board
+              Issue Board
             </a>.
           </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
           <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn
             color="primary"
             nuxt
-            to="/inspire"
+            to="/music-visualizer"
           >
-            Continue
+            Music Visualizer
+          </v-btn>
+          <v-btn
+            color="primary"
+            nuxt
+            to="/haunted-house"
+          >
+            Haunted House
           </v-btn>
         </v-card-actions>
       </v-card>
