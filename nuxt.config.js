@@ -8,34 +8,11 @@ export default {
     '@business': resolve(__dirname, './business')
   },
   router: {
-    mode: 'history',
-    extendRoutes (routes, resolve) {
-      routes.length = 0
-      routes.push({
-        path: '/',
-        component: resolve(__dirname, 'pages/index.vue'),
-        name: 'index'
-      })
-      routes.push({
-        path: '/inspire',
-        component: resolve(__dirname, 'pages/inspire.vue'),
-        name: 'inspire'
-      })
-      routes.push({
-        path: '/threejs',
-        component: resolve(__dirname, 'pages/threejs.vue'),
-        name: 'threejs'
-      })
-    }
+    base: '/threejs/'
   },
-  // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  ssr: false,
-
-  // Target: https://go.nuxtjs.dev/config-target
-  target: 'static',
-
-  // Global page headers: https://go.nuxtjs.dev/config-head
-  head: {
+  ssr: false, // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
+  target: 'static', // Target: https://go.nuxtjs.dev/config-target
+  head: { // Global page headers: https://go.nuxtjs.dev/config-head
     titleTemplate: '%s - threejs',
     title: 'threejs',
     htmlAttrs: {
@@ -51,38 +28,19 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-
-  // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-  ],
-
-  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-  ],
-
-  // Auto import components: https://go.nuxtjs.dev/config-components
-  components: true,
-
-  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: [
-    // https://go.nuxtjs.dev/typescript
-    '@nuxt/typescript-build',
-    // https://go.nuxtjs.dev/vuetify
-    '@nuxtjs/vuetify',
+  css: [], // Global CSS: https://go.nuxtjs.dev/config-css
+  plugins: [], // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
+  components: true, // Auto import components: https://go.nuxtjs.dev/config-components
+  buildModules: [ // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
+    '@nuxt/typescript-build', // https://go.nuxtjs.dev/typescript
+    '@nuxtjs/vuetify', // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/composition-api/module'
   ],
-
-  // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [
-    // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+  modules: [ // Modules: https://go.nuxtjs.dev/config-modules
+    '@nuxtjs/axios' // https://go.nuxtjs.dev/axios
   ],
-
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
-
-  // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
-  vuetify: {
+  axios: {}, // Axios module configuration: https://go.nuxtjs.dev/config-axios
+  vuetify: { // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
     customVariables: [
       '~/assets/variables.scss'
     ],
@@ -100,9 +58,5 @@ export default {
         }
       }
     }
-  },
-
-  // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {
   }
 }
