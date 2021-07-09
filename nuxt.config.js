@@ -7,6 +7,27 @@ export default {
     '@composables': resolve(__dirname, './composables'),
     '@business': resolve(__dirname, './business')
   },
+  router: {
+    mode: 'history',
+    extendRoutes (routes, resolve) {
+      routes.length = 0
+      routes.push({
+        path: '/',
+        component: resolve(__dirname, 'pages/index.vue'),
+        name: 'index'
+      })
+      routes.push({
+        path: '/inspire',
+        component: resolve(__dirname, 'pages/inspire.vue'),
+        name: 'inspire'
+      })
+      routes.push({
+        path: '/threejs',
+        component: resolve(__dirname, 'pages/threejs.vue'),
+        name: 'threejs'
+      })
+    }
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
