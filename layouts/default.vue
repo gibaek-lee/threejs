@@ -108,8 +108,8 @@ export default {
         },
         {
           icon: 'mdi-lifebuoy',
-          title: 'Threejs',
-          to: '/threejs'
+          title: 'hauntedHouse',
+          to: '/haunted-house'
         }
       ],
       miniVariant: false,
