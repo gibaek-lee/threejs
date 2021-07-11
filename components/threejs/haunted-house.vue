@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, provide } from '@nuxtjs/composition-api'
+import { defineComponent, ref, provide, inject } from '@nuxtjs/composition-api'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import * as THREE from 'three'
 import * as dat from 'dat.gui'
@@ -34,6 +34,9 @@ export default defineComponent({
     const scene = ref(null)
 
     provide(scene)
+
+    const test = inject('test')
+    console.log(test)
 
     return {
       scene

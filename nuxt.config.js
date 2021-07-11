@@ -8,7 +8,20 @@ export default {
     '@business': resolve(__dirname, './business')
   },
   router: {
-    base: '/threejs/'
+    base: '/threejs/',
+    extendRoutes (routes, resolve) {
+      const playgroundList = [
+        'haunted-house',
+        'music-visualizer'
+      ]
+      playgroundList.forEach((name) => {
+        routes.push({
+          name,
+          path: `/playground/${name}`,
+          component: resolve(__dirname, 'pages/playground.vue')
+        })
+      })
+    }
   },
   ssr: false, // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   target: 'static', // Target: https://go.nuxtjs.dev/config-target

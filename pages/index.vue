@@ -48,14 +48,14 @@
           <v-btn
             color="primary"
             nuxt
-            to="/music-visualizer"
+            to="/playground/music-visualizer"
           >
             Music Visualizer
           </v-btn>
           <v-btn
             color="primary"
             nuxt
-            to="/haunted-house"
+            to="/playground/haunted-house"
           >
             Haunted House
           </v-btn>

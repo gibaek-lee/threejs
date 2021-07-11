@@ -58,12 +58,12 @@ export default defineComponent({
         {
           icon: 'mdi-chart-bubble',
           title: 'Music Visualizer',
-          to: '/music-visualizer'
+          to: '/playground/music-visualizer'
         },
         {
           icon: 'mdi-lifebuoy',
           title: 'Haunted House',
-          to: '/haunted-house'
+          to: '/playground/haunted-house'
         }
       ]
     }
