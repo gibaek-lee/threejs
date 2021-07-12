@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { GraveMaker } from '@utils/threejs/hauntedHouse'
+import { GraveMaker } from '~/utils/threejs/hauntedHouse'
 
 function mountGraves () {
   const mountGrave = (instanceGraveMaker) => {
