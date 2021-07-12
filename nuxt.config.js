@@ -3,9 +3,10 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   alias: {
-    '@utils': resolve(__dirname, './utils'),
-    '@composables': resolve(__dirname, './composables'),
-    '@business': resolve(__dirname, './business')
+    // todoc alias 쓰면 타입 추적이 안됨. 무조건 ~/ 을 default 패스로 import 해야함
+    // '@utils': resolve(__dirname, './utils'),
+    // '@composables': resolve(__dirname, './composables'),
+    // '@business': resolve(__dirname, './business')
   },
   router: {
     base: '/threejs/',

@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { defineComponent, ref, provide } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default defineComponent({
   components: {
@@ -11,17 +12,30 @@ export default defineComponent({
     'music-visualizer': () => import('~/components/threejs/music-visualizer.vue')
   },
   setup () {
-    const test = ref('hello')
-
-    provide('test', test)
   },
   computed: {
+    ...mapGetters('threejs', {
+    }),
     page () {
       return {
         '/playground/haunted-house': 'haunted-house',
         '/playground/music-visualizer': 'music-visualizer'
       }[this.$route.path]
     }
+  },
+  methods: {
+    ...mapMutations('threejs', {
+    }),
+    ...mapActions('threejs', {
+    })
   }
 })
 </script>
+
+<style lang="scss">
+canvas.webgl {
+  outline: none;
+  width: 100% !important;
+  height: 100% !important;
+}
+</style>

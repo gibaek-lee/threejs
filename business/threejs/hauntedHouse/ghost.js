@@ -16,7 +16,7 @@ function mountGhost () {
       updatePosition()
     }
 
-    function updatePosition() {
+    function updatePosition () {
       const angle = ghost.rotation.y
       camera.position.set(
         Math.sin(angle) * cameraRelRotRadius + pivot.x,
@@ -56,7 +56,7 @@ function mountGhost () {
         break
     }
 
-    function updatePosition(deltaX, deltaZ) {
+    function updatePosition (deltaX, deltaZ) {
       ghost.position.set(
         ghost.position.x + deltaX,
         ghost.position.y,

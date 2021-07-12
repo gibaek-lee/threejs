@@ -1,8 +1,14 @@
+import { GUI } from 'dat.gui'
 import * as THREE from 'three'
-import { house, graves } from '@business/threejs/hauntedHouse'
+import { house, graves } from '~/business/threejs/hauntedHouse'
 
-export default function useHouse (scene, gui) {
-  const tensorHouseGroup = [
+export default function useHouse (
+  scene: THREE.Scene,
+  gui: GUI
+): {
+  tensorHouseGroup: THREE.Vector3[]
+} {
+  const tensorHouseGroup: THREE.Vector3[] = [
     new THREE.Vector3(30, 0, -30), new THREE.Vector3(10, 0, -30), new THREE.Vector3(-10, 0, -30), new THREE.Vector3(-30, 0, -30),
     new THREE.Vector3(30, 0, -10), new THREE.Vector3(10, 0, -10), new THREE.Vector3(-10, 0, -10), new THREE.Vector3(-30, 0, -10),
     new THREE.Vector3(30, 0, 10), new THREE.Vector3(10, 0, 10), new THREE.Vector3(-10, 0, 10), new THREE.Vector3(-30, 0, 10),

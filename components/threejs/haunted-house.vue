@@ -1,5 +1,5 @@
 <template>
-  <v-row class="threejs">
+  <v-row class="haunted-house">
     <v-col class="col-controls">
       <v-btn
         small
@@ -18,131 +18,64 @@
 </template>
 
 <script>
-import { defineComponent, ref, provide, inject } from '@nuxtjs/composition-api'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
-import * as THREE from 'three'
-import * as dat from 'dat.gui'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { lights } from '@business/threejs/hauntedHouse'
-import { useFloor, useHouse, useGhost } from '@composables/threejs/hauntedHouse'
+import { defineComponent } from '@nuxtjs/composition-api'
+import { lights } from '~/business/threejs/hauntedHouse'
+import useCanvas from '~/composables/threejs'
+import { useFloor, useHouse, useGhost } from '~/composables/threejs/hauntedHouse'
 
 const EMode = { orbit: 'orbit', keypress: 'keypress' }
 
 export default defineComponent({
-  name: 'Threejs',
-  setup () {
-    const scene = ref(null)
-
-    provide(scene)
-
-    const test = inject('test')
-    console.log(test)
+  setup (props, context) {
+    const {
+      registerRenderTickCanvas,
+      gui,
+      scene,
+      renderer,
+      axesHelper,
+      cameraOrbit,
+      orbitControl,
+      windowSizes,
+      clock
+    } = useCanvas(context)
 
     return {
-      scene
+      registerRenderTickCanvas,
+      gui,
+      scene,
+      renderer,
+      axesHelper,
+      cameraOrbit,
+      orbitControl,
+      windowSizes,
+      clock
     }
   },
   data () {
     return {
-      canvas: null,
-      renderer: null,
-      clock: null,
-      orbitControl: null,
       cameraControlMode: 'orbit',
-      cameraOrbit: null,
       cameraGhost: null,
-      me: null,
-      gui: null,
-      axesHelper: null,
-      textureLoader: null
-    }
-  },
-  computed: {
-    ...mapGetters('threejs', {
-    }),
-    windowSizes () {
-      return {
-        width: window.innerWidth,
-        height: window.innerHeight
-      }
-    },
-    isInit () {
-      return !!this.orbitControl &&
-             !!this.renderer &&
-             !!this.scene &&
-             !!this.cameraOrbit
+      me: null
     }
   },
   watch: {
-    canvas () {
-      this.init()
-    },
-    isInit (cur) {
-      if (!cur) {
-        return
-      }
-
-      // run init must once in a scene
-      if (!this.clock) {
-        // add meshes on scene
-        this.scene.add(this.axesHelper, this.cameraOrbit)
-
-        lights.addOnScene(this.scene, this.gui)
-
-        useFloor(this.scene)
-
-        const { tensorHouseGroup } = useHouse(this.scene, this.gui)
-
-        const { me, cameraGhost } = useGhost(this.scene, tensorHouseGroup, this.windowSizes)
-        this.me = me
-        this.cameraGhost = cameraGhost
-
-        // render scene repeat
-        this.clock = new THREE.Clock()
-        this.tick()
-      }
-    }
   },
   mounted () {
-    window.addEventListener('resize', () => {
-      this.windowSizes.width = window.innerWidth
-      this.windowSizes.height = window.innerHeight
-
-      this.cameraOrbit.aspect = this.windowSizes.width / this.windowSizes.height
-      this.cameraOrbit.updateProjectionMatrix()
-
-      this.renderer.setSize(this.windowSizes.width, this.windowSizes.height)
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    this.registerRenderTickCanvas(() => {
+      this.initUtils()
+      this.tick()
     })
-
-    this.canvas = this.$el.querySelector('canvas.webgl')
   },
   methods: {
-    ...mapMutations('threejs', {
-    }),
-    ...mapActions('threejs', {
-    }),
-    init () {
-      this.gui = new dat.GUI({ closed: true, width: 350 })
-      this.scene = new THREE.Scene()
+    initUtils () {
+      this.scene.add(this.axesHelper, this.cameraOrbit)
+      lights.addOnScene(this.scene, this.gui)
+      useFloor(this.scene)
 
-      this.axesHelper = new THREE.AxesHelper(1)
-      this.axesHelper.position.x = 2.01
-      this.axesHelper.position.y = 0.01
-      this.axesHelper.position.z = 2.01
-
-      this.cameraOrbit = new THREE.PerspectiveCamera(75, this.windowSizes.width / this.windowSizes.height, 0.1, 200)
-      this.cameraOrbit.position.set(4, 20, 60)
-
-      this.textureLoader = new THREE.TextureLoader()
-
-      this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas })
-      this.renderer.setSize(this.windowSizes.width, this.windowSizes.height)
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-      this.renderer.setClearColor('#262837')
-
-      this.orbitControl = new OrbitControls(this.cameraOrbit, this.canvas)
-      this.orbitControl.enableDamping = true
+      const { tensorHouseGroup } = useHouse(this.scene, this.gui)
+      const { me, cameraGhost } = useGhost(this.scene, tensorHouseGroup, this.windowSizes)
+      this.me = me
+      this.cameraGhost = cameraGhost
     },
     tick () {
       const elapsedTime = this.clock.getElapsedTime()
@@ -174,24 +107,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.threejs {
+.haunted-house {
   height: 100%;
 
   .col-controls {
     flex-grow: unset;
-
-    .change-update-mode {
-    }
   }
 
   .col-canvas {
     flex-grow: inherit;
-
-    .webgl {
-      outline: none;
-      width: 100% !important;
-      height: 100% !important;
-    }
   }
 }
 </style>

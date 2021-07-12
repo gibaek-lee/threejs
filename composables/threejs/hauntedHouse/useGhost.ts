@@ -1,7 +1,15 @@
 import * as THREE from 'three'
-import { ghost } from '@business/threejs/hauntedHouse'
+import { ghost } from '~/business/threejs/hauntedHouse'
+import { IWindowSizes } from '~/composables/threejs'
 
-export default function useGhost (scene, tensorHouseGroup, windowSizes) {
+export default function useGhost (
+  scene: THREE.Scene,
+  tensorHouseGroup: THREE.Vector3[],
+  windowSizes: IWindowSizes
+): {
+  me: any, // todo
+  cameraGhost: THREE.PerspectiveCamera
+} {
   const {
     me,
     relCameraPositionToGhost,

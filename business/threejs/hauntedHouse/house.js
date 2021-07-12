@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { HouseMaker } from '@utils/threejs/hauntedHouse'
+import { HouseMaker } from '~/utils/threejs/hauntedHouse'
 
 function mountHouse () {
   const wallSize = {

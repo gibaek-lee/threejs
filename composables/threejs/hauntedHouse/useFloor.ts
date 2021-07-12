@@ -1,10 +1,10 @@
 import * as THREE from 'three'
 
-export default function useFloor (scene) {
-  const NUM_PLANES = 4
-  const BASE_WIDHT_PLANE = 20
+export default function useFloor (scene: THREE.Scene) {
+  const NUM_PLANES: number = 4
+  const BASE_WIDHT_PLANE: number = 20
 
-  const floor = new THREE.Mesh(
+  const floor: THREE.Mesh = new THREE.Mesh(
     new THREE.PlaneGeometry(BASE_WIDHT_PLANE * NUM_PLANES, BASE_WIDHT_PLANE * NUM_PLANES),
     new THREE.MeshStandardMaterial({ color: '#a9c388' })
   )
