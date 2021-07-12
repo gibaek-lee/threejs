@@ -4,8 +4,12 @@
       <div class="button-wrapper">
         <div class="play-music">
           <p>(click me)play music</p>
-          <v-btn id="audio-start-btn-camel" small color="primary" dark @click="onAudioStart">bensound-cute.mp3</v-btn>
-          <v-btn id="audio-start-btn-swim" small color="primary" dark @click="onAudioStart">bensound-acousticbreeze.mp3</v-btn>
+          <v-btn id="audio-start-btn-camel" small color="primary" dark @click="onAudioStart">
+            {{ audioList[0] }}
+          </v-btn>
+          <v-btn id="audio-start-btn-swim" small color="primary" dark @click="onAudioStart">
+            {{ audioList[1] }}
+          </v-btn>
         </div>
         <div class="control-visualizer">
           <p>(click me)control visualizer</p>
@@ -91,6 +95,12 @@ export default defineComponent({
     }
   },
   computed: {
+    audioList () {
+      return [
+        'bensound-cute.mp3',
+        'bensound-acousticbreeze.mp3'
+      ]
+    },
     domDescriptionInitPosition () {
       return this.$el.querySelector('#description-init-position')
     },
@@ -182,7 +192,7 @@ export default defineComponent({
       window.requestAnimationFrame(this.tick)
     },
     onAudioStart (event) {
-      this.audioAnalyst.play(this.cameraOrbit, `/threejs/audio/${event.target.innerText}`)
+      this.audioAnalyst.play(this.cameraOrbit, `/threejs/audio/${event.target.innerText}`.toLowerCase())
       this.handlerPlayAnimation()
       this.$el.querySelector('#music-title').innerText = event.target.innerText
     },
