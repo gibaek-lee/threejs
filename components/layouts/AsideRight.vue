@@ -12,7 +12,7 @@
             mdi-repeat
           </v-icon>
         </v-list-item-action>
-        <v-list-item-title>Switch drawer (click me)</v-list-item-title>
+        <v-list-item-title>Switch drawer</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
