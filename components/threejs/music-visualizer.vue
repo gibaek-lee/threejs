@@ -4,8 +4,12 @@
       <div class="button-wrapper">
         <div class="play-music">
           <p>(click me)play music</p>
-          <v-btn id="audio-start-btn-camel" small color="primary" dark>bensound-cute.mp3</v-btn>
-          <v-btn id="audio-start-btn-swim" small color="primary" dark>bensound-acousticbreeze.mp3</v-btn>
+          <v-btn id="audio-start-btn-camel" small color="primary" dark @click="onAudioStart">
+            {{ audioList[0] }}
+          </v-btn>
+          <v-btn id="audio-start-btn-swim" small color="primary" dark @click="onAudioStart">
+            {{ audioList[1] }}
+          </v-btn>
         </div>
         <div class="control-visualizer">
           <p>(click me)control visualizer</p>
@@ -91,6 +95,12 @@ export default defineComponent({
     }
   },
   computed: {
+    audioList () {
+      return [
+        'bensound-cute.mp3',
+        'bensound-acousticbreeze.mp3'
+      ]
+    },
     domDescriptionInitPosition () {
       return this.$el.querySelector('#description-init-position')
     },
@@ -117,18 +127,6 @@ export default defineComponent({
     }
   },
   mounted () {
-    document.querySelector('#audio-start-btn-camel').addEventListener('click', (event) => {
-      this.audioAnalyst.play(this.cameraOrbit, '/audio/bensound-cute.mp3')
-      this.handlerPlayAnimation()
-      this.$el.querySelector('#music-title').innerText = event.target.innerText
-    })
-
-    document.querySelector('#audio-start-btn-swim').addEventListener('click', (event) => {
-      this.audioAnalyst.play(this.cameraOrbit, '/audio/bensound-acousticbreeze.mp3')
-      this.handlerPlayAnimation()
-      this.$el.querySelector('#music-title').innerText = event.target.innerText
-    })
-
     this.registerRenderTickCanvas(() => {
       this.initUtils()
       this.tick()
@@ -192,6 +190,11 @@ export default defineComponent({
       this.renderer.render(this.scene, this.cameraOrbit)
 
       window.requestAnimationFrame(this.tick)
+    },
+    onAudioStart (event) {
+      this.audioAnalyst.play(this.cameraOrbit, `/threejs/audio/${event.target.innerText}`.toLowerCase())
+      this.handlerPlayAnimation()
+      this.$el.querySelector('#music-title').innerText = event.target.innerText
     },
     onModeInitPosition () {
       this.modeInitPosition = this.isModeCircle ? IModeInitPosition.linear : IModeInitPosition.circle
