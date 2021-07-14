@@ -37,5 +37,5 @@ $ npm run deploy # deploy to githubpages
 ## reference
 ### `three.js 참고자료`
 
-[three.js org document](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
+[three.js org document](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)<br>
 [three.js journey](https://threejs-journey.xyz/)
