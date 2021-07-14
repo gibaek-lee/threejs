@@ -6,7 +6,7 @@ webgl을 활용한 다양한 어플리케이션을 실험하는 reposit
 
 ### `기술스택`
 
-프론트엔드 프레임워크: Nuxt
+프론트엔드 프레임워크: Nuxt<br>
 webgl 라이브러리: three.js
 
 ### `폴더구조(wt core files) & 라우팅(nuxt.config)`
