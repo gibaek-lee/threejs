@@ -4,10 +4,17 @@
 
 webgl을 활용한 다양한 어플리케이션을 실험하는 reposit
 
+### `기술스택`
+
 프론트엔드 프레임워크: Nuxt
 webgl 라이브러리: three.js
 
-githup-pages: [threejs playground](https://gibaek-lee.github.io/threejs/)
+### `폴더구조(wt core files) & 라우팅(nuxt.config)`
+
+[Webgl(wt threejs & nuxt)](https://docs.google.com/presentation/d/17WGG9_Ta_cRJbsu3JsRxzDVkaGIKA_kQhbYjzROwQS8/edit?usp=sharing)
+
+### `github-pages`
+[threejs playground](https://gibaek-lee.github.io/threejs/)
 
 ## Build Setup
 
@@ -28,11 +35,6 @@ $ npm run deploy # deploy to githubpages
 ```
 
 ## reference
-
-### `폴더구조(wt core files) & 라우팅(nuxt.config)`
-
-[Webgl(wt threejs & nuxt)](https://docs.google.com/presentation/d/17WGG9_Ta_cRJbsu3JsRxzDVkaGIKA_kQhbYjzROwQS8/edit?usp=sharing)
-
 ### `three.js 참고자료`
 
 [three.js org document](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
