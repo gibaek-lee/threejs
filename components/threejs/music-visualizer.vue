@@ -3,7 +3,7 @@
     <v-row class="row-controls">
       <div class="button-wrapper">
         <div class="play-music">
-          <p>(click me)play music</p>
+          <p>play music</p>
           <v-btn id="audio-start-btn-camel" small color="primary" dark @click="onAudioStart">
             {{ audioList[0] }}
           </v-btn>
@@ -12,7 +12,7 @@
           </v-btn>
         </div>
         <div class="control-visualizer">
-          <p>(click me)control visualizer</p>
+          <p>control visualizer</p>
           <v-btn id="mode-init-position" small color="primary" dark @click="onModeInitPosition">원형배치</v-btn>
           <v-btn id="mode-random" small color="primary" dark @click="onModeRandom">랜덤</v-btn>
           <v-btn id="mode-move" small color="primary" dark @click="onModeMove">무브</v-btn>
@@ -192,6 +192,10 @@ export default defineComponent({
       window.requestAnimationFrame(this.tick)
     },
     onAudioStart (event) {
+      if (this.audioAnalyst) {
+        this.audioAnalyst.stop()
+      }
+
       this.audioAnalyst.play(this.cameraOrbit, `/threejs/audio/${event.target.innerText}`.toLowerCase())
       this.handlerPlayAnimation()
       this.$el.querySelector('#music-title').innerText = event.target.innerText

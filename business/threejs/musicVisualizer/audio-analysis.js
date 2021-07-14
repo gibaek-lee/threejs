@@ -42,6 +42,13 @@ class AudioAnalysis {
     this.analyser = new THREE.AudioAnalyser(this.sound, FFT_SIZE)
   }
 
+  stop () {
+    if (!this.sound) {
+      return
+    }
+    this.sound.stop()
+  }
+
   getBeatTiming () {
     const elapseTime = this.clock.getElapsedTime()
     // 만일 elapseTime이 2초의 배수이면 return true, 아니면 return false
