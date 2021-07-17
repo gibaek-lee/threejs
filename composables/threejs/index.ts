@@ -13,8 +13,12 @@ export interface IWindowSizes {
   height: number
 }
 
+export interface IExtendDatGui extends dat.GUI {
+  parentSelector: string
+}
+
 export default function UseWebgl (context: SetupContext) {
-  const gui: Ref<dat.GUI | null> = ref(null)
+  const gui: Ref<IExtendDatGui | null> = ref(null)
   const scene: Ref<THREE.Scene | null> = ref(null)
   const axesHelper: Ref<THREE.AxesHelper | null> = ref(null)
   const cameraOrbit: Ref<THREE.PerspectiveCamera | null> = ref(null)
@@ -84,7 +88,7 @@ export default function UseWebgl (context: SetupContext) {
   }
 
   const initDatGui = () => {
-    gui.value = new dat.GUI({ closed: false, width: 350 })
+    gui.value = new dat.GUI({ closed: false, width: 350 }) as IExtendDatGui
 
     // fixme CSR에서 라우트 이동했다 재진입시 Element(div.dg.ac)가 null이 되어 gui.add가 되지 않는다.
     // gui.destroy()의 문제이다. 아마 document 생성 시점과 dat.gui의 new가 의존성이 있어 보인다.
