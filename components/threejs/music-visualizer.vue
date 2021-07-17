@@ -49,7 +49,7 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
-import useCanvas from '~/composables/threejs'
+import UseWebgl from '~/composables/threejs'
 import {
   IModeInitPosition, IModeRandom, IModeMove, IModeDecibelY
 } from '~/business/threejs/musicVisualizer/static.interface'
@@ -69,7 +69,7 @@ export default defineComponent({
       orbitControl,
       windowSizes,
       clock
-    } = useCanvas(context)
+    } = UseWebgl(context)
 
     return {
       registerRenderTickCanvas,
@@ -91,7 +91,20 @@ export default defineComponent({
       modeInitPosition: IModeInitPosition.linear,
       modeRandom: IModeRandom.static,
       modeMove: IModeMove.stay,
-      modeDecibelY: IModeDecibelY.freq
+      modeDecibelY: IModeDecibelY.freq,
+      idAnimationFrame: null
+    }
+  },
+  head () {
+    return {
+      title: 'Musci Visualizer',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Musci Visualizer developed via three.js which is a library for webgl api'
+        }
+      ]
     }
   },
   computed: {
@@ -131,6 +144,10 @@ export default defineComponent({
       this.initUtils()
       this.tick()
     })
+  },
+  beforeDestroy () {
+    this.audioAnalyst.stop()
+    window.cancelAnimationFrame(this.idAnimationFrame)
   },
   methods: {
     initUtils () {
@@ -189,13 +206,10 @@ export default defineComponent({
 
       this.renderer.render(this.scene, this.cameraOrbit)
 
-      window.requestAnimationFrame(this.tick)
+      this.idAnimationFrame = window.requestAnimationFrame(this.tick)
     },
     onAudioStart (event) {
-      if (this.audioAnalyst) {
-        this.audioAnalyst.stop()
-      }
-
+      this.audioAnalyst.stop()
       this.audioAnalyst.play(this.cameraOrbit, `/threejs/audio/${event.target.innerText}`.toLowerCase())
       this.handlerPlayAnimation()
       this.$el.querySelector('#music-title').innerText = event.target.innerText

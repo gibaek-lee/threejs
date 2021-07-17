@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import colors from 'vuetify/es5/util/colors'
+import ThreejsComponentListJson from './static/threejs-component-list.json'
 
 export default {
   alias: {
@@ -11,17 +12,14 @@ export default {
   router: {
     base: '/threejs/',
     extendRoutes (routes, resolve) {
-      const playgroundList = [
-        'haunted-house',
-        'music-visualizer'
-      ]
-      playgroundList.forEach((name) => {
-        routes.push({
-          name,
-          path: `/playground/${name}`,
-          component: resolve(__dirname, 'pages/playground.vue')
+      JSON.parse(JSON.stringify(ThreejsComponentListJson))
+        .forEach((threejsComponentItem) => {
+          routes.push({
+            name: threejsComponentItem.id,
+            path: threejsComponentItem.path,
+            component: resolve(__dirname, 'pages/playground.vue')
+          })
         })
-      })
     }
   },
   ssr: false, // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
