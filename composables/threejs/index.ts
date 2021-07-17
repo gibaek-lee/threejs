@@ -13,8 +13,8 @@ export interface IWindowSizes {
   height: number
 }
 
-export default function useCanvas (context: SetupContext) {
-  const gui: Ref = ref(null)
+export default function UseWebgl (context: SetupContext) {
+  const gui: Ref<dat.GUI | null> = ref(null)
   const scene: Ref<THREE.Scene | null> = ref(null)
   const axesHelper: Ref<THREE.AxesHelper | null> = ref(null)
   const cameraOrbit: Ref<THREE.PerspectiveCamera | null> = ref(null)
@@ -38,6 +38,7 @@ export default function useCanvas (context: SetupContext) {
 
   watch(canvas, () => {
     initThreejs()
+    initDatGui()
   })
 
   onMounted(() => {
@@ -61,7 +62,6 @@ export default function useCanvas (context: SetupContext) {
   })
 
   const initThreejs = () => {
-    gui.value = new dat.GUI({ closed: true, width: 350 })
     scene.value = new THREE.Scene()
 
     axesHelper.value = new THREE.AxesHelper(1)
@@ -83,6 +83,15 @@ export default function useCanvas (context: SetupContext) {
     clock.value = new THREE.Clock()
   }
 
+  const initDatGui = () => {
+    gui.value = new dat.GUI({ closed: false, width: 350 })
+
+    // fixme CSR에서 라우트 이동했다 재진입시 Element(div.dg.ac)가 null이 되어 gui.add가 되지 않는다.
+    // gui.destroy()의 문제이다. 아마 document 생성 시점과 dat.gui의 new가 의존성이 있어 보인다.
+    // (solution) beforeDestroy 시점에 gui.parentSelector에 gui.domElement를 append 한 후 destroy 한다.
+    gui.value.parentSelector = 'div.dg.ac'
+  }
+
   const registerRenderTickCanvas = (callbackTick: Function) => {
     let counter = 0
     const intervalId = window.setInterval(() => {
@@ -93,10 +102,10 @@ export default function useCanvas (context: SetupContext) {
 
       // error handling
       counter = counter + 1
-      console.log('waiting useCanvas init...', counter)
+      console.log('waiting UseWebgl init...', counter)
       if (counter > 60) {
         window.clearInterval(intervalId)
-        console.error('failed to init useCanvas')
+        console.error('failed to init UseWebgl')
       }
     }, 100)
   }
@@ -110,6 +119,7 @@ export default function useCanvas (context: SetupContext) {
     cameraOrbit,
     orbitControl,
     windowSizes,
-    clock
+    clock,
+    textureLoader
   }
 }

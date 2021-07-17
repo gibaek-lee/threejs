@@ -2,11 +2,17 @@
 
 ## Description
 
-webgl을 활용한 다양한 어플리케이션을 실험하는 reposit
+webgl 라이브러리 three.js를 활용한 다양한 기능을 실험하는 곳입니다.
+
+```bash
+page1: Audio Visualizer
+page2: Haunted House(Mesh 및 키보드 컨드롤 테스트)
+page3: Laboratory Webgl(three.js의 간단한 기능들을 테스트하는 카드 모음)
+```
 
 ### `기술스택`
 
-프론트엔드 프레임워크: Nuxt<br>
+프론트엔드 프레임워크: Nuxt CSR<br>
 webgl 라이브러리: three.js
 
 ### `폴더구조(wt core files) & 라우팅(nuxt.config)`

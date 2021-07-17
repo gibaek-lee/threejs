@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { ghost } from '~/business/threejs/hauntedHouse'
 import { IWindowSizes } from '~/composables/threejs'
 
-export default function useGhost (
+export default function UseGhost (
   scene: THREE.Scene,
   tensorHouseGroup: THREE.Vector3[],
   windowSizes: IWindowSizes

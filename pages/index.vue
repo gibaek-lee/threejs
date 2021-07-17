@@ -12,55 +12,92 @@
           <p>
             Author: <em>Gibaek Lee</em>
           </p>
-          <p>
-            For more information on me, check out the <a
-              href="https://www.linkedin.com/in/gibaeklee/"
+          <p
+            v-for="item in profileInfoList"
+            :key="item.id"
+          >
+            {{ item.desc }}
+            <a
+              :href="item.link"
               target="_blank"
               rel="noopener noreferrer"
+              :title="item.id"
             >
-              LinkedIn Profile
-            </a>.
-          </p>
-          <p>
-            If you have questions, please mail to <a
-              href="mailto:bbsnake10@gmail.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="mailto"
-            >
-              My GMail
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/gibaek-lee/threejs/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              Issue Board
-            </a>.
-          </p>
+              {{ item.langset }}
+            </a>
+          </p>.
           <hr class="my-3">
         </v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn
-            color="primary"
+            v-for="(item) in threejsComponentList"
+            :key="item.icon"
             nuxt
-            to="/playground/music-visualizer"
+            :to="item.path"
           >
-            Music Visualizer
-          </v-btn>
-          <v-btn
-            color="primary"
-            nuxt
-            to="/playground/haunted-house"
-          >
-            Haunted House
+            {{ item.langset }}
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
 </template>
+
+<script>
+import { defineComponent } from '@vue/composition-api'
+import ThreejsComponentListJson from '~/static/threejs-component-list.json'
+
+export default defineComponent({
+  head () {
+    return {
+      title: 'Threejs Playground',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Threejs Playground, experimental zone for three.js which is a library for webgl api.'
+        },
+        {
+          hid: 'keyword',
+          name: 'keyword',
+          content: 'three.js, threejs, webgl, canvas, nuxt, vue'
+        }
+      ]
+    }
+  },
+  computed: {
+    profileInfoList () {
+      return [
+        {
+          id: 'linkedin',
+          desc: 'For more information on me, check out the',
+          link: 'https://www.linkedin.com/in/gibaeklee/',
+          langset: 'LinkedIn Profile'
+        },
+        {
+          id: 'mailto',
+          desc: 'If you have questions, please mail to',
+          link: 'mailto:bbsnake10@gmail.com',
+          langset: 'My GMail'
+        },
+        {
+          id: 'issues',
+          desc: 'Find a bug? Report it on the github',
+          link: 'https://github.com/gibaek-lee/threejs/issues',
+          langset: 'Issue Board'
+        },
+        {
+          id: 'github',
+          desc: 'Visit Github Project Repository',
+          link: 'https://github.com/gibaek-lee/threejs',
+          langset: 'here'
+        }
+      ]
+    },
+    threejsComponentList () {
+      return JSON.parse(JSON.stringify(ThreejsComponentListJson))
+    }
+  }
+})
+</script>

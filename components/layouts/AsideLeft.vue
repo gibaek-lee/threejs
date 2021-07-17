@@ -8,7 +8,7 @@
   >
     <v-list>
       <v-list-item
-        v-for="(item, i) in items"
+        v-for="(item, i) in pathList"
         :key="i"
         :to="item.to"
         router
@@ -27,6 +27,7 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
+import ThreejsComponentListJson from '~/static/threejs-component-list.json'
 
 export default defineComponent({
   props: {
@@ -45,27 +46,13 @@ export default defineComponent({
       default: false
     }
   },
-  setup () {
-  },
-  data () {
-    return {
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Music Visualizer',
-          to: '/playground/music-visualizer'
-        },
-        {
-          icon: 'mdi-lifebuoy',
-          title: 'Haunted House',
-          to: '/playground/haunted-house'
-        }
-      ]
+  computed: {
+    pathList () {
+      const threejsComponentList = JSON.parse(JSON.stringify(ThreejsComponentListJson))
+      const itemList = [{ icon: 'mdi-apps', title: 'Welcome', to: '/' }]
+
+      return threejsComponentList
+        .reduce((a, c) => [...a, { icon: c.icon, title: c.langset, to: c.path }], itemList)
     }
   }
 })

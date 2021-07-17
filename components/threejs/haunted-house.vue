@@ -1,5 +1,5 @@
 <template>
-  <v-row class="haunted-house">
+  <v-row :class="`${selectorCanvasWrap}-container`">
     <v-col class="col-controls">
       <v-btn
         small
@@ -11,7 +11,10 @@
         {{ cameraControlMode }}
       </v-btn>
     </v-col>
-    <v-col class="col-canvas">
+    <v-col
+      class="col-canvas"
+      :class="selectorCanvasWrap"
+    >
       <canvas class="webgl" />
     </v-col>
   </v-row>
@@ -20,8 +23,8 @@
 <script>
 import { defineComponent } from '@nuxtjs/composition-api'
 import { lights } from '~/business/threejs/hauntedHouse'
-import useCanvas from '~/composables/threejs'
-import { useFloor, useHouse, useGhost } from '~/composables/threejs/hauntedHouse'
+import UseWebgl from '~/composables/threejs'
+import { UseFloor, UseHouse, UseGhost } from '~/composables/threejs/hauntedHouse'
 
 const EMode = { orbit: 'orbit', keypress: 'keypress' }
 
@@ -37,7 +40,7 @@ export default defineComponent({
       orbitControl,
       windowSizes,
       clock
-    } = useCanvas(context)
+    } = UseWebgl(context)
 
     return {
       registerRenderTickCanvas,
@@ -53,27 +56,47 @@ export default defineComponent({
   },
   data () {
     return {
+      selectorCanvasWrap: 'haunted-house',
       cameraControlMode: 'orbit',
       cameraGhost: null,
-      me: null
+      me: null,
+      idAnimationFrame: null
     }
   },
-  watch: {
+  head () {
+    return {
+      title: 'Haunted House',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Haunted House developed via three.js which is a library for webgl api'
+        }
+      ]
+    }
   },
   mounted () {
     this.registerRenderTickCanvas(() => {
       this.initUtils()
+      this.setStyleDatGui()
       this.tick()
     })
+  },
+  beforeDestroy () {
+    window.cancelAnimationFrame(this.idAnimationFrame)
+
+    const guiParentNode = document.querySelector(this.gui.parentSelector)
+    guiParentNode.appendChild(this.gui.domElement)
+    this.gui.destroy()
   },
   methods: {
     initUtils () {
       this.scene.add(this.axesHelper, this.cameraOrbit)
       lights.addOnScene(this.scene, this.gui)
-      useFloor(this.scene)
+      UseFloor(this.scene)
 
-      const { tensorHouseGroup } = useHouse(this.scene, this.gui)
-      const { me, cameraGhost } = useGhost(this.scene, tensorHouseGroup, this.windowSizes)
+      const { tensorHouseGroup } = UseHouse(this.scene, this.gui)
+      const { me, cameraGhost } = UseGhost(this.scene, tensorHouseGroup, this.windowSizes)
       this.me = me
       this.cameraGhost = cameraGhost
     },
@@ -90,7 +113,11 @@ export default defineComponent({
           this.renderer.render(this.scene, this.cameraGhost)
       }
 
-      window.requestAnimationFrame(this.tick)
+      this.idAnimationFrame = window.requestAnimationFrame(this.tick)
+    },
+    setStyleDatGui () {
+      this.gui.domElement.style.cssText += 'position: absolute; right: 0px; top: 0px;'
+      this.$el.querySelector(`.${this.selectorCanvasWrap}`).appendChild(this.gui.domElement)
     },
     onChangeCameraControlMode () {
       switch (this.cameraControlMode) {
@@ -107,7 +134,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.haunted-house {
+.haunted-house-container {
   height: 100%;
 
   .col-controls {
@@ -116,6 +143,7 @@ export default defineComponent({
 
   .col-canvas {
     flex-grow: inherit;
+    position: relative;
   }
 }
 </style>
