@@ -1,9 +1,9 @@
-import useFloor from './useFloor'
-import useHouse from './useHouse'
-import useGhost from './useGhost'
+import UseFloor from './UseFloor'
+import UseHouse from './UseHouse'
+import UseGhost from './UseGhost'
 
 export {
-  useFloor,
-  useHouse,
-  useGhost
+  UseFloor,
+  UseHouse,
+  UseGhost
 }
