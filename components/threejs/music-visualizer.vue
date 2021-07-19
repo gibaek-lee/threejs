@@ -60,6 +60,7 @@ import AudioAnalysis from '~/business/threejs/musicVisualizer/audio-analysis'
 export default defineComponent({
   setup (props, context) {
     const {
+      setCanvas,
       registerRenderTickCanvas,
       gui,
       scene,
@@ -69,9 +70,13 @@ export default defineComponent({
       orbitControl,
       windowSizes,
       clock
-    } = UseWebgl(context)
+    } = UseWebgl({
+      context,
+      isOrbitControl: true
+    })
 
     return {
+      setCanvas,
       registerRenderTickCanvas,
       gui,
       scene,
@@ -140,6 +145,7 @@ export default defineComponent({
     }
   },
   mounted () {
+    this.setCanvas({ vm: this })
     this.registerRenderTickCanvas(() => {
       this.initUtils()
       this.tick()

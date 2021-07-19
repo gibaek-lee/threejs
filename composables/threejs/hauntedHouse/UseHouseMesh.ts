@@ -2,7 +2,7 @@ import { GUI } from 'dat.gui'
 import * as THREE from 'three'
 import { house, graves } from '~/business/threejs/hauntedHouse'
 
-export default function UseHouse (
+export default function UseHouseMesh (
   scene: THREE.Scene,
   gui: GUI
 ): {

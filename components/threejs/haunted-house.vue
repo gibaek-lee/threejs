@@ -24,13 +24,14 @@
 import { defineComponent } from '@nuxtjs/composition-api'
 import { lights } from '~/business/threejs/hauntedHouse'
 import UseWebgl from '~/composables/threejs'
-import { UseFloor, UseHouse, UseGhost } from '~/composables/threejs/hauntedHouse'
+import { UseFloorMesh, UseHouseMesh, UseGhostMesh } from '~/composables/threejs/hauntedHouse'
 
 const EMode = { orbit: 'orbit', keypress: 'keypress' }
 
 export default defineComponent({
   setup (props, context) {
     const {
+      setCanvas,
       registerRenderTickCanvas,
       gui,
       scene,
@@ -40,9 +41,13 @@ export default defineComponent({
       orbitControl,
       windowSizes,
       clock
-    } = UseWebgl(context)
+    } = UseWebgl({
+      context,
+      isOrbitControl: true
+    })
 
     return {
+      setCanvas,
       registerRenderTickCanvas,
       gui,
       scene,
@@ -76,6 +81,7 @@ export default defineComponent({
     }
   },
   mounted () {
+    this.setCanvas({ vm: this })
     this.registerRenderTickCanvas(() => {
       this.initUtils()
       this.setStyleDatGui()
@@ -93,10 +99,10 @@ export default defineComponent({
     initUtils () {
       this.scene.add(this.axesHelper, this.cameraOrbit)
       lights.addOnScene(this.scene, this.gui)
-      UseFloor(this.scene)
+      UseFloorMesh(this.scene)
 
-      const { tensorHouseGroup } = UseHouse(this.scene, this.gui)
-      const { me, cameraGhost } = UseGhost(this.scene, tensorHouseGroup, this.windowSizes)
+      const { tensorHouseGroup } = UseHouseMesh(this.scene, this.gui)
+      const { me, cameraGhost } = UseGhostMesh(this.scene, tensorHouseGroup, this.windowSizes)
       this.me = me
       this.cameraGhost = cameraGhost
     },

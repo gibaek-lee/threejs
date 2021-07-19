@@ -17,7 +17,13 @@ export interface IExtendDatGui extends dat.GUI {
   parentSelector: string
 }
 
-export default function UseWebgl (context: SetupContext) {
+export default function UseWebgl ({
+  context,
+  isOrbitControl = false
+} : {
+  context: SetupContext,
+  isOrbitControl: boolean
+}) {
   const gui: Ref<IExtendDatGui | null> = ref(null)
   const scene: Ref<THREE.Scene | null> = ref(null)
   const axesHelper: Ref<THREE.AxesHelper | null> = ref(null)
@@ -36,8 +42,7 @@ export default function UseWebgl (context: SetupContext) {
   const isReadyCanvasRenderTick: ComputedRef<boolean> = computed(() => {
     return !!scene.value &&
            !!renderer.value &&
-           !!cameraOrbit.value &&
-           !!orbitControl.value
+           !!cameraOrbit.value
   })
 
   watch(canvas, () => {
@@ -60,10 +65,22 @@ export default function UseWebgl (context: SetupContext) {
         renderer.value.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       }
     })
-
-    // todoc WebGLRenderer 파라미터 canvas 타입과 querySelector 리턴 타입 정의가 다르다.
-    canvas.value = context.root.$el.querySelector('canvas.webgl') as HTMLCanvasElement || undefined
   })
+
+  const setCanvas = ({
+    vm,
+    selectorCanvasId = ''
+  } : {
+    vm: Vue,
+    selectorCanvasId: string
+  }) => {
+    let canvasGeneralSelector = 'canvas.webgl'
+    if (selectorCanvasId) {
+      canvasGeneralSelector += `.${selectorCanvasId}`
+    }
+
+    canvas.value = vm.$el.querySelector(canvasGeneralSelector) as HTMLCanvasElement || undefined
+  }
 
   const initThreejs = () => {
     scene.value = new THREE.Scene()
@@ -81,8 +98,10 @@ export default function UseWebgl (context: SetupContext) {
     renderer.value.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.value.setClearColor('#262837')
 
-    orbitControl.value = new OrbitControls(cameraOrbit.value, canvas.value)
-    orbitControl.value.enableDamping = true
+    if (isOrbitControl) {
+      orbitControl.value = new OrbitControls(cameraOrbit.value, canvas.value)
+      orbitControl.value.enableDamping = true
+    }
 
     clock.value = new THREE.Clock()
   }
@@ -115,7 +134,9 @@ export default function UseWebgl (context: SetupContext) {
   }
 
   return {
+    setCanvas,
     registerRenderTickCanvas,
+    canvas,
     gui,
     scene,
     renderer,
