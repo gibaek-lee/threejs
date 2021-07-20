@@ -27,6 +27,7 @@ export default defineComponent({
   setup (props, context) {
     // Apply only member instances of canvas to be used
     const {
+      setCanvas,
       registerRenderTickCanvas,
       gui,
       scene,
@@ -36,9 +37,13 @@ export default defineComponent({
       orbitControl,
       windowSizes,
       clock
-    } = UseWebgl(context) // required
+    } = UseWebgl({
+      context,
+      isOrbitControl: false
+    }) // required
 
     return {
+      setCanvas,
       registerRenderTickCanvas,
       gui,
       scene,
@@ -57,6 +62,7 @@ export default defineComponent({
     }
   },
   mounted () {
+    this.setCanvas({ vm: this })
     this.registerRenderTickCanvas(() => {
       // run this callback just once after ready threejs environment
       this.initUtils() // required
