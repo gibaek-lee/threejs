@@ -2,9 +2,9 @@
   <v-row class="laboratory-webgl" align="start">
     <v-col cols="12" sm="8" md="6">
       <v-card
-        class="card__camera-lookat-target"
-        :class="{'fullsize': isShowFullSize}"
-        @click.native="onFullSize"
+        class="laboratory-webgl__card-item card__camera-lookat-target"
+        :class="{'fullsize': isShowFullSize[0]}"
+        @click.native="(e) => onFullSize(e, 0)"
       >
         <v-card-title>
           Experiment 1. Camera Lookat Target
@@ -15,7 +15,11 @@
       </v-card>
     </v-col>
     <v-col cols="12" sm="8" md="6">
-      <v-card class="card__normal-vector-directional-transition">
+      <v-card
+        class="laboratory-webgl__card-item card__normal-vector-directional-transition"
+        :class="{'fullsize': isShowFullSize[1]}"
+        @click.native="(e) => onFullSize(e, 1)"
+      >
         <v-card-title>
           Experiment 2. Normal Vector Directional Transition
         </v-card-title>
@@ -51,7 +55,7 @@ export default defineComponent({
   },
   data () {
     return {
-      isShowFullSize: false
+      isShowFullSize: [false, false]
     }
   },
   head () {
@@ -67,9 +71,12 @@ export default defineComponent({
     }
   },
   methods: {
-    onFullSize (event) {
+    onFullSize (event, idx) {
       if (event.target.localName === 'canvas') { // dat.gui 클릭 bubbling 차단
-        this.isShowFullSize = !this.isShowFullSize
+        this.isShowFullSize = this.isShowFullSize.reduce((accum, cur, i) => {
+          accum[i] = (i === idx) ? !cur : cur
+          return accum
+        }, [])
       }
     }
   }
@@ -77,16 +84,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.card__camera-lookat-target {
-  &:hover {
-    cursor: pointer;
-  }
+.laboratory-webgl {
+  &__card-item {
+    &:hover {
+      cursor: pointer;
+    }
 
-  &.fullsize {
-    position: fixed;
-    z-index: 2;
+    &.fullsize {
+      position: fixed;
+      z-index: 2;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
   }
 }
-
-
 </style>

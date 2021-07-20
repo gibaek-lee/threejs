@@ -11,14 +11,15 @@
       >
         <img
           :src="thumbnailSrc"
-          width="100%"
-          height="100%"
+          width="auto"
+          height="180px"
         >
         <p>Hover your mouse over the screen to start</p>
       </div>
       <canvas
+        v-else
         class="webgl"
-        :class="`${selectorCanvasWrap}_canvas`"
+        :class="selectorCanvasId"
         @mouseenter="onMouseEnterCanvas"
         @mouseout="onMouseOutCanvas"
       />
@@ -33,7 +34,9 @@ import UseWebgl from '~/composables/threejs'
 export default defineComponent({
   setup (props, context) {
     const {
+      setCanvas,
       registerRenderTickCanvas,
+      canvas,
       gui,
       scene,
       renderer,
@@ -42,10 +45,15 @@ export default defineComponent({
       windowSizes,
       clock,
       textureLoader
-    } = UseWebgl(context)
+    } = UseWebgl({
+      context,
+      isOrbitControl: false
+    })
 
     return {
+      setCanvas,
       registerRenderTickCanvas,
+      canvas,
       gui,
       scene,
       renderer,
@@ -63,6 +71,11 @@ export default defineComponent({
       thumbnailSrc: '/threejs/images/*.png', // extends
       isHoverToStart: false,
       isInit: false
+    }
+  },
+  computed: {
+    selectorCanvasId () {
+      return `${this.selectorCanvasWrap}_canvas`
     }
   },
   beforeDestroy () {
@@ -86,6 +99,7 @@ export default defineComponent({
       this.isHoverToStart = true
     },
     onMouseEnterCanvas () {
+      this.setCanvas({ vm: this, selectorCanvasId: this.selectorCanvasId })
       this.registerRenderTickCanvas(() => {
         if (!this.isInit) {
           this.isInit = true
@@ -118,12 +132,15 @@ export default defineComponent({
     position: relative;
 
     &__thumbnail {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80%;
-      height: 80%;
+      width: 30%;
+      margin: auto;
+
+      > p {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 0);
+      }
     }
   }
 }

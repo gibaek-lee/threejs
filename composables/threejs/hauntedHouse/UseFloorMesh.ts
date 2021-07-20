@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-export default function UseFloor (scene: THREE.Scene) {
+export default function UseFloorMesh (scene: THREE.Scene) {
   const NUM_PLANES: number = 4
   const BASE_WIDHT_PLANE: number = 20
 

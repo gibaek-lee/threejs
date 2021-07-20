@@ -1,9 +1,9 @@
-import UseFloor from './UseFloor'
-import UseHouse from './UseHouse'
-import UseGhost from './UseGhost'
+import UseFloorMesh from './UseFloorMesh'
+import UseHouseMesh from './UseHouseMesh'
+import UseGhostMesh from './UseGhostMesh'
 
 export {
-  UseFloor,
-  UseHouse,
-  UseGhost
+  UseFloorMesh,
+  UseHouseMesh,
+  UseGhostMesh
 }
