@@ -6,7 +6,7 @@ interface IParamUseShadow {
   scene: THREE.Scene
   renderer: THREE.WebGLRenderer
   recieveMesh: THREE.Mesh
-  castMesh: THREE.Mesh
+  castMeshs: THREE.Mesh[]
   light: TShadowSupportLights
   isUseCameraHelper: boolean
 }
@@ -19,7 +19,7 @@ export default function UseShadow ({
   scene,
   renderer,
   recieveMesh,
-  castMesh,
+  castMeshs,
   light,
   isUseCameraHelper
 } : IParamUseShadow): IReturnUseShadow {
@@ -28,7 +28,7 @@ export default function UseShadow ({
 
   recieveMesh.receiveShadow = true
 
-  castMesh.castShadow = true
+  castMeshs.forEach((m: THREE.Mesh) => { m.castShadow = true })
 
   light.castShadow = true
   light.shadow.mapSize.width = 1024
