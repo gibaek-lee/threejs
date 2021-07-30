@@ -6,7 +6,7 @@
  * Reference it when develop a new threejs application component.
  */
 <template>
-  <v-row class="component-name">
+  <v-row :class="`${selectorCanvasWrap}-container`">
     <!--
       custom markup
     -->
@@ -114,7 +114,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.component-name {
+.mother-container-selector-name { /** `${selectorCanvasWrap}-container` */
   height: 100%;
 
   .col-controls {
