@@ -1,7 +1,7 @@
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
 
 export enum EScreenMode {
-  'f' = 'fullsize',
+  // 'f' = 'fullsize',
   'p' = 'partial'
 }
 
@@ -15,7 +15,7 @@ export default function UsePointerLockControls ({
   camera,
   canvas,
   options: {
-    mode = EScreenMode.f,
+    mode = EScreenMode.p,
     deltaMove = 0.1
   }
 } : {

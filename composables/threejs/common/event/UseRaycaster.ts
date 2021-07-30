@@ -13,7 +13,8 @@ export default function UseRaycaster ({
   const mouse = new THREE.Vector2()
 
   const onMouseMove = (event: MouseEvent) => {
-    if (event.target && event.target.tagName !== 'CANVAS') {
+    const target = event.target as HTMLElement
+    if (target && target.tagName !== 'CANVAS') {
       return
     }
 
