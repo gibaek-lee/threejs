@@ -26,17 +26,10 @@ export default function UsePointerLockControls ({
 }): { controls: PointerLockControls } {
   const controls = new PointerLockControls(camera, canvas)
   const invokeModeLockCallback = {
-    [EScreenMode.f]: () => {
-      if (controls.isLocked) {
-        controls.unlock()
-      } else {
-        controls.lock()
-      }
-    },
     [EScreenMode.p]: () => {
       if (controls.isLocked) {
         controls.unlock()
-      } else if (!vm.$el.closest('.fullsize')) {
+      } else {
         controls.lock()
       }
     }
@@ -45,19 +38,19 @@ export default function UsePointerLockControls ({
   canvas.addEventListener('click', invokeModeLockCallback[mode])
 
   window.addEventListener('keydown', (event) => {
-    switch (event.key) {
-      case 'w':
-        controls.moveForward(deltaMove)
-        break
-      case 'a':
-        controls.moveRight(-deltaMove)
-        break
-      case 'd':
-        controls.moveRight(deltaMove)
-        break
-      case 's':
-        controls.moveForward(-deltaMove)
-        break
+    switch (event.key) { // fixme 벡텨연산으로 바꿔야 한다.
+      // case 'w':
+      //   controls.moveForward(deltaMove)
+      //   break
+      // case 'a':
+      //   controls.moveRight(-deltaMove)
+      //   break
+      // case 'd':
+      //   controls.moveRight(deltaMove)
+      //   break
+      // case 's':
+      //   controls.moveForward(-deltaMove)
+      //   break
       case 'Escape':
         controls.unlock()
         break

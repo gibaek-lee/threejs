@@ -81,10 +81,12 @@ export default defineComponent({
   beforeDestroy () {
     window.cancelAnimationFrame(this.idAnimationFrame)
 
-    const guiParentNode = document.querySelector(this.gui.parentSelector)
-    guiParentNode.appendChild(this.gui.domElement)
+    if (this.gui) {
+      const guiParentNode = document.querySelector(this.gui.parentSelector)
+      guiParentNode.appendChild(this.gui.domElement)
 
-    this.gui.destroy()
+      this.gui.destroy()
+    }
   },
   methods: {
     initUtils () { // extends

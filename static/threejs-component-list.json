@@ -12,6 +12,12 @@
     "icon": "mdi-lifebuoy"
   },
   {
+    "id": "mouse-event-change-object",
+    "langset": "Mouse Event Change Object",
+    "path": "/playground/mouse-event-change-object",
+    "icon": "mdi-wrench"
+  },
+  {
     "id": "laboratory-webgl",
     "langset": "Laboratory Webgl",
     "path": "/playground/laboratory-webgl",
