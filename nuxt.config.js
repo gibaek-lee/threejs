@@ -2,6 +2,8 @@ import { resolve } from 'path'
 import colors from 'vuetify/es5/util/colors'
 import ThreejsComponentListJson from './static/threejs-component-list.json'
 
+const isDevelop = process.env.NODE_ENV === 'development'
+
 export default {
   alias: {
     // todoc alias 쓰면 타입 추적이 안됨. 무조건 ~/ 을 default 패스로 import 해야함
@@ -35,7 +37,8 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'og:title', property: 'og:title', content: 'three.js playground' },
       { hid: 'og:description', property: 'og:description', content: 'three.js web graphics experiments' },
-      { hid: 'og:image', property: 'og:image', content: '/threejs/og-image.png' },
+      { hid: 'og:image', property: 'og:image', content: isDevelop ? '/threejs/og-image.png' : '//gibaek-lee.github.io/threejs/og-image.png' },
+      { hid: 'og:url', property: 'og:url', content: '//gibaek-lee.github.io/threejs/' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
