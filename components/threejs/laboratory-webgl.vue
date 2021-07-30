@@ -55,6 +55,7 @@ export default defineComponent({
   computed: {
     componentsNames () {
       return Object.keys(this.$options.components)
+        .filter(v => v[0] !== 'V') // todoc 빌드하면 vuetify 컴포넌트(v-card 등)이 components 옵션 안으로 들어와 'V'로 시작하는 컴포넌트는 제외해야 한다.
     }
   },
   mounted () {
