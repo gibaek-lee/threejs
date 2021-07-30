@@ -29,7 +29,7 @@ export default defineComponent({
         scene: this.scene,
         renderer: this.renderer,
         recieveMesh: plane,
-        castMesh: sphere,
+        castMeshs: [sphere],
         light: pointLight,
         isUseCameraHelper: true
       })

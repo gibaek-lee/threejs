@@ -1,40 +1,25 @@
 <template>
   <v-row class="laboratory-webgl" align="start">
-    <v-col cols="12" sm="8" md="6">
+    <v-col
+      v-for="(item, index) in fullsizeFlags"
+      :key="index"
+      cols="12"
+      sm="8"
+      md="6"
+    >
       <v-card
-        class="laboratory-webgl__card-item card__camera-lookat-target"
-        :class="{'fullsize': isShowFullSize[0]}"
-        @click.native="(e) => onFullSize(e, 0)"
+        class="laboratory-webgl__card-item"
+        :class="[
+          `card__${componentsNames[index]}`,
+          fullsizeFlags[index] ? 'fullsize' : ''
+        ]"
+        @click.native="(e) => onFullSize(e, index)"
       >
         <v-card-title>
-          Experiment 1. Camera Lookat Target
+          {{ `Experiment ${index + 1}. ${componentsNames[index]}` }}
         </v-card-title>
         <v-card-actions>
-          <camera-lookat-target />
-        </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col cols="12" sm="8" md="6">
-      <v-card
-        class="laboratory-webgl__card-item card__normal-vector-directional-transition"
-        :class="{'fullsize': isShowFullSize[1]}"
-        @click.native="(e) => onFullSize(e, 1)"
-      >
-        <v-card-title>
-          Experiment 2. Normal Vector Directional Transition
-        </v-card-title>
-        <v-card-actions>
-          <normal-vector-directional-transition />
-        </v-card-actions>
-      </v-card>
-    </v-col>
-    <v-col cols="12" sm="8" md="6">
-      <v-card class="card__3">
-        <v-card-title>
-          Experiment 3. 3D Viewer
-        </v-card-title>
-        <v-card-actions>
-          <three-dimentional-viewer />
+          <component :is="componentsNames[index]" />
         </v-card-actions>
       </v-card>
     </v-col>
@@ -43,19 +28,16 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
-import CameraLookatTarget from './laboratoryWebglExperiments/camera-lookat-target'
-import NormalVectorDirectionalTransition from './laboratoryWebglExperiments/normal-vector-directional-transition'
-import ThreeDimentionalViewer from './laboratoryWebglExperiments/three-dimentional-viewer'
 
 export default defineComponent({
   components: {
-    CameraLookatTarget,
-    NormalVectorDirectionalTransition,
-    ThreeDimentionalViewer
+    'camera-lookat-target': () => import('./laboratoryWebglExperiments/camera-lookat-target'),
+    'normal-vector-directional-transition': () => import('./laboratoryWebglExperiments/normal-vector-directional-transition'),
+    'raycast-hover-interaction': () => import('./laboratoryWebglExperiments/raycast-hover-interaction')
   },
   data () {
     return {
-      isShowFullSize: [false, false]
+      fullsizeFlags: []
     }
   },
   head () {
@@ -70,14 +52,23 @@ export default defineComponent({
       ]
     }
   },
+  computed: {
+    componentsNames () {
+      return Object.keys(this.$options.components)
+    }
+  },
+  mounted () {
+    this.fullsizeFlags = this.componentsNames.reduce(a => a.concat([false]), [])
+  },
   methods: {
     onFullSize (event, idx) {
-      if (event.target.localName === 'canvas') { // dat.gui 클릭 bubbling 차단
-        this.isShowFullSize = this.isShowFullSize.reduce((accum, cur, i) => {
-          accum[i] = (i === idx) ? !cur : cur
-          return accum
-        }, [])
+      const { target } = event
+      if (target.localName !== 'canvas') { // dat.gui 클릭 bubbling 차단
+        return
       }
+
+      // update fullsizeFlags
+      this.fullsizeFlags = this.fullsizeFlags.reduce((a, c, i) => a.concat([(i === idx) ? !c : c]), [])
     }
   }
 })
@@ -85,6 +76,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .laboratory-webgl {
+  height: calc(100vh - 100px); /** 100px 헤더 푸터 사이즈 */
+  overflow: auto;
+
   &__card-item {
     &:hover {
       cursor: pointer;
@@ -94,6 +88,7 @@ export default defineComponent({
       position: fixed;
       z-index: 2;
       left: 0;
+      top: 0;
       width: 100vw;
       height: 100vh;
     }

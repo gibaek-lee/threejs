@@ -28,7 +28,7 @@
           </p>.
           <hr class="my-3">
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="canvas-playground-list">
           <v-spacer />
           <v-btn
             v-for="(item) in threejsComponentList"
@@ -101,3 +101,16 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="scss" scoped>
+.canvas-playground-list {
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+
+  > a {
+    margin-left: 8px;
+    margin-bottom: 8px;
+  }
+}
+</style>
