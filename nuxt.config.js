@@ -33,7 +33,9 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
+      { hid: 'og:title', property: 'og:title', content: 'three.js playground' },
+      { hid: 'og:description', property: 'og:description', content: 'three.js web graphics experiments' },
+      { hid: 'og:image', property: 'og:image', content: '/threejs/og-image.png' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
