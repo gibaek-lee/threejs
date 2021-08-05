@@ -45,3 +45,5 @@ $ npm run deploy # deploy to githubpages
 
 [three.js org document](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)<br>
 [three.js journey](https://threejs-journey.xyz/)
+<br>
+[glTF-Sample-Models](https://github.com/KhronosGroup/glTF-Sample-Models)
