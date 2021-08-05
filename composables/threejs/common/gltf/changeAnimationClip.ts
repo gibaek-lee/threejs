@@ -15,7 +15,10 @@ interface IInvokeClipAction {
 export default function changeAnimation ({
   mixer,
   animations
-}: IParamChangeAnimation): { invokeClipAction: IInvokeClipAction } {
+}: IParamChangeAnimation): {
+  invokeClipAction: IInvokeClipAction,
+  destroyClipEvent: Function
+} {
   const invokeClipAction: IInvokeClipAction = {}
   const actionQueue: IActionData[] = []
 
@@ -52,15 +55,21 @@ export default function changeAnimation ({
     }
   })
 
-  const clipKeys = animations.reduce((a: string[], c: THREE.AnimationClip) => a.concat([c.name]), [])
-  window.addEventListener('keydown', (event) => {
+  const keydownCallback = (event: KeyboardEvent) => {
+    const clipKeys = animations.reduce((a: string[], c: THREE.AnimationClip) => a.concat([c.name]), [])
     const mapKey = clipKeys[Number(event.key) - 1]
     const invoker = invokeClipAction[mapKey] || invokeClipAction.stop
 
     invoker()
-  })
+  }
+  window.addEventListener('keydown', keydownCallback)
+
+  const destroyClipEvent = () => {
+    window.removeEventListener('keydown', keydownCallback)
+  }
 
   return {
-    invokeClipAction
+    invokeClipAction,
+    destroyClipEvent
   }
 }

@@ -69,7 +69,7 @@ export default defineComponent({
       basePlane: null,
       iGLTF: null,
       iAnimationMixer: null,
-      invokeClipAction: null
+      changeAnimation: null
     }
   },
   watch: {
@@ -108,6 +108,8 @@ export default defineComponent({
     const guiParentNode = document.querySelector(this.gui.parentSelector)
     guiParentNode.appendChild(this.gui.domElement)
     this.gui.destroy()
+
+    this.changeAnimation.destroyClipEvent()
   },
   methods: {
     initUtils () {
@@ -139,10 +141,10 @@ export default defineComponent({
       UseGLTF({
         loaderType: E_GLTF.DEFAULT,
         targetModelPath: '/threejs/models/Fox/glTF/Fox.gltf',
-        successCallback: ({ gltf, animationMixer, invokeClipAction }) => {
+        successCallback: ({ gltf, animationMixer, changeAnimation }) => {
           this.iGLTF = gltf
           this.iAnimationMixer = animationMixer
-          this.invokeClipAction = invokeClipAction
+          this.changeAnimation = changeAnimation
 
           const { scaleFox } = this.guiParams
 
@@ -195,7 +197,7 @@ export default defineComponent({
     clickAniBtn (id) {
       const clipKeys = this.iGLTF.animations.reduce((a, c) => a.concat([c.name]), [])
       const mapKey = clipKeys[id - 1]
-      const invoker = this.invokeClipAction[mapKey] || this.invokeClipAction.stop
+      const invoker = this.changeAnimation.invokeClipAction[mapKey] || this.changeAnimation.invokeClipAction.stop
 
       invoker()
     }

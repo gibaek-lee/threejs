@@ -13,14 +13,12 @@ export enum E_GLTF {
 interface IParamUseGLTF {
   loaderType: E_GLTF
   targetModelPath: string
-  aniBtnId: number
   successCallback?: Function
 }
 
 export default function UseGLTF ({
   loaderType = E_GLTF.DEFAULT,
   targetModelPath = '',
-  aniBtnId = 1,
   successCallback = () => {}
 }: IParamUseGLTF) {
   // sample model: https://github.com/KhronosGroup/glTF-Sample-Models
@@ -55,17 +53,20 @@ export default function UseGLTF ({
 
           // animation
           let animationMixer = null
-          let invokeClipAction = null
+          let changeAnimation = null
           if (gltf.animations.length > 0) {
             animationMixer = new THREE.AnimationMixer(gltf.scene)
-
-            invokeClipAction = changeAnimationClip({
+            changeAnimation = changeAnimationClip({
               mixer: animationMixer,
               animations: gltf.animations
-            }).invokeClipAction
+            })
           }
 
-          successCallback({ gltf, animationMixer, invokeClipAction })
+          successCallback({
+            gltf,
+            animationMixer,
+            changeAnimation
+          })
         }
       )
     })
