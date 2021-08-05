@@ -7,6 +7,7 @@ webgl 라이브러리 three.js를 활용한 다양한 기능을 실험하는 곳
 ```bash
 page1: Audio Visualizer
 page2: Haunted House(Mesh 및 키보드 컨드롤 테스트)
+page3: Animate Model Import(gltf 모델 import와 clip animation 테스트)
 page3: Laboratory Webgl(three.js의 간단한 기능들을 테스트하는 카드 모음)
 ```
 
