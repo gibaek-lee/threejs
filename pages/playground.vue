@@ -12,6 +12,7 @@ export default defineComponent({
     'haunted-house': () => import('~/components/threejs/haunted-house.vue'),
     'music-visualizer': () => import('~/components/threejs/music-visualizer.vue'),
     'laboratory-webgl': () => import('~/components/threejs/laboratory-webgl.vue'),
+    'animate-model-import': () => import('~/components/threejs/animate-model-import.vue'),
     'mouse-event-change-object': () => import('~/components/threejs/mouse-event-change-object.vue')
   },
   head () {
