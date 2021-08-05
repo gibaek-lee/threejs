@@ -12,6 +12,12 @@
     "icon": "mdi-lifebuoy"
   },
   {
+    "id": "animate-model-import",
+    "langset": "Animate Model Import",
+    "path": "/playground/animate-model-import",
+    "icon": "mdi-call-split"
+  },
+  {
     "id": "mouse-event-change-object",
     "langset": "Mouse Event Change Object",
     "path": "/playground/mouse-event-change-object",

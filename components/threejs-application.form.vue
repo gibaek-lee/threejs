@@ -58,7 +58,16 @@ export default defineComponent({
   data () {
     return {
       idAnimationFrame: null, // required
-      selectorCanvasWrap: ''
+      selectorCanvasWrap: '',
+      guiParams: {}
+    }
+  },
+  watch: {
+    guiParams: {
+      deep: true,
+      handler (cur) {
+        // update threejs instance properties
+      }
     }
   },
   mounted () {
@@ -83,6 +92,12 @@ export default defineComponent({
   },
   methods: {
     initUtils () {
+      // gui
+      this.guiParams = Object.assign({
+        // 이곳에 정의한 parameter 주소의 참조값을 threejs class constructor에 넘겨야
+        // gui ui 패널에서 값 변경 시 instance가 값을 참조하여 씬에 반영한다.
+      }, {})
+
       // initialze for business logic
       // composable을 여기서 사용하는 것을 권장한다
     },
