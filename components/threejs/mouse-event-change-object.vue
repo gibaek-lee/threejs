@@ -19,6 +19,7 @@
 <script>
 import { defineComponent } from '@vue/composition-api'
 import UseWebgl from '~/composables/threejs'
+import UseWebWorker from '~/composables/threejs/common/worker/UseWebWorker'
 
 export default defineComponent({
   setup (props, context) {
@@ -57,6 +58,24 @@ export default defineComponent({
       selectorCanvasWrap: 'mouse-event-change-object'
     }
   },
+  computed: {
+    workerScript () { // cannon script
+      return `
+        let world
+        self.onmessage = function (event) {
+          console.log('tagScript get message', event.data, self)
+          const { cannonUrl } = event.data
+
+          if (cannonUrl && !world) {
+            self.importScripts(cannonUrl)
+
+            world = new CANNON.World()
+            console.log('@@@canon world generated', world)
+          }
+        }
+      `
+    }
+  },
   mounted () {
     this.setCanvas({ vm: this })
     this.registerRenderTickCanvas(() => {
@@ -64,6 +83,14 @@ export default defineComponent({
       this.setStyleDatGui()
       this.tick()
     })
+
+    // init phyics
+    const { iComposeWorker } = UseWebWorker({
+      N: 40,
+      dt: 1 / 60,
+      workerScript: this.workerScript
+    })
+    iComposeWorker.sendDataToWorker() // can pass data
   },
   beforeDestroy () {
     window.cancelAnimationFrame(this.idAnimationFrame)
