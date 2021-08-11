@@ -58,24 +58,6 @@ export default defineComponent({
       selectorCanvasWrap: 'mouse-event-change-object'
     }
   },
-  computed: {
-    workerScript () { // cannon script
-      return `
-        let world
-        self.onmessage = function (event) {
-          console.log('tagScript get message', event.data, self)
-          const { cannonUrl } = event.data
-
-          if (cannonUrl && !world) {
-            self.importScripts(cannonUrl)
-
-            world = new CANNON.World()
-            console.log('@@@canon world generated', world)
-          }
-        }
-      `
-    }
-  },
   mounted () {
     this.setCanvas({ vm: this })
     this.registerRenderTickCanvas(() => {
@@ -84,13 +66,16 @@ export default defineComponent({
       this.tick()
     })
 
-    // init phyics
-    const { iComposeWorker } = UseWebWorker({
-      N: 40,
-      dt: 1 / 60,
-      workerScript: this.workerScript
-    })
-    iComposeWorker.sendDataToWorker() // can pass data
+    const baseDomain = document.location.origin
+    this.readCannonBusinessFile(`${baseDomain}/threejs/cannon/business/test.js`)
+      .then((cannonScript) => {
+        const { iComposeWorker } = UseWebWorker({
+          N: 40,
+          dt: 1 / 60,
+          workerScript: cannonScript
+        })
+        iComposeWorker.sendDataToWorker() // can pass data
+      })
   },
   beforeDestroy () {
     window.cancelAnimationFrame(this.idAnimationFrame)
@@ -113,6 +98,20 @@ export default defineComponent({
     setStyleDatGui () {
       this.gui.domElement.style.cssText += 'position: absolute; right: 0px; top: 0px;'
       this.$el.querySelector(`.${this.selectorCanvasWrap}`).appendChild(this.gui.domElement)
+    },
+    readCannonBusinessFile (file) {
+      return new Promise((resolve) => {
+        const rawFile = new XMLHttpRequest()
+        rawFile.open('GET', file, false)
+        rawFile.onreadystatechange = () => {
+          if (rawFile.readyState === 4) {
+            if (rawFile.status === 200 || rawFile.status === 0) {
+              resolve(rawFile.responseText)
+            }
+          }
+        }
+        rawFile.send(null)
+      })
     }
   }
 })
