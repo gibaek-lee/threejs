@@ -18,6 +18,7 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
+import * as utils from '~/utils/common'
 import UseWebgl from '~/composables/threejs'
 import UseWebWorker from '~/composables/threejs/common/worker/UseWebWorker'
 
@@ -55,7 +56,8 @@ export default defineComponent({
   data () {
     return {
       idAnimationFrame: null,
-      selectorCanvasWrap: 'mouse-event-change-object'
+      selectorCanvasWrap: 'mouse-event-change-object',
+      iComposeWorker: null
     }
   },
   mounted () {
@@ -66,16 +68,7 @@ export default defineComponent({
       this.tick()
     })
 
-    const baseDomain = document.location.origin
-    this.readCannonBusinessFile(`${baseDomain}/threejs/cannon/business/test.js`)
-      .then((cannonScript) => {
-        const { iComposeWorker } = UseWebWorker({
-          N: 40,
-          dt: 1 / 60,
-          workerScript: cannonScript
-        })
-        iComposeWorker.sendDataToWorker() // can pass data
-      })
+    this.initWorkerPhysics()
   },
   beforeDestroy () {
     window.cancelAnimationFrame(this.idAnimationFrame)
@@ -88,6 +81,19 @@ export default defineComponent({
     initUtils () {
 
     },
+    initWorkerPhysics () {
+      const baseDomain = document.location.origin
+      utils.readStaticFile({ url: `${baseDomain}/threejs/cannon/business/test.js` })
+        .then((cannonWorldScript) => {
+          const { iComposeWorker } = UseWebWorker({
+            N: 40,
+            dt: 1 / 60,
+            physicsLibUrl: `${baseDomain}/threejs/cannon/build/cannon.js`,
+            physicsWorldScript: cannonWorldScript
+          })
+          this.iComposeWorker = iComposeWorker
+        })
+    },
     tick () {
       const elapsedTime = this.clock.getElapsedTime()
 
@@ -98,20 +104,6 @@ export default defineComponent({
     setStyleDatGui () {
       this.gui.domElement.style.cssText += 'position: absolute; right: 0px; top: 0px;'
       this.$el.querySelector(`.${this.selectorCanvasWrap}`).appendChild(this.gui.domElement)
-    },
-    readCannonBusinessFile (file) {
-      return new Promise((resolve) => {
-        const rawFile = new XMLHttpRequest()
-        rawFile.open('GET', file, false)
-        rawFile.onreadystatechange = () => {
-          if (rawFile.readyState === 4) {
-            if (rawFile.status === 200 || rawFile.status === 0) {
-              resolve(rawFile.responseText)
-            }
-          }
-        }
-        rawFile.send(null)
-      })
     }
   }
 })
