@@ -1,5 +1,3 @@
-import { ref, watch } from '@nuxtjs/composition-api'
-
 interface IParamUseWebWorker {
   N: number
   dt: number
@@ -7,13 +5,19 @@ interface IParamUseWebWorker {
   physicsWorldScript: string
 }
 
+interface IMessageFromWorker {
+  positions: Float32Array | undefined,
+  quaternions: Float32Array | undefined
+}
+
 class ComposeWebWorker {
-  N: number
-  dt: number
-  sendTime: number
-  physicsLibUrl: string
-  physicsWorldScript: string
-  worker: Worker | any // fixme Worker interface로 정의해야 하지만 constructor 스코프에서 초기화 하지 않으므로 any로 해둠
+  protected N: number
+  protected dt: number
+  protected sendTime: number
+  protected physicsLibUrl: string
+  protected physicsWorldScript: string
+  public worker: Worker | any // fixme Worker interface로 정의해야 하지만 constructor 스코프에서 초기화 하지 않으므로 any로 해둠
+  public messageFromWorker: IMessageFromWorker
 
   constructor ({
     N, dt, physicsLibUrl, physicsWorldScript
@@ -23,6 +27,10 @@ class ComposeWebWorker {
     this.sendTime = 0
     this.physicsLibUrl = physicsLibUrl
     this.physicsWorldScript = physicsWorldScript
+    this.messageFromWorker = {
+      positions: undefined,
+      quaternions: undefined
+    }
 
     this.init()
   }
@@ -33,27 +41,17 @@ class ComposeWebWorker {
       .then(() => {
         // todoc physic engine script read & library construct
         this.worker.postMessage(Object.assign({}, { physicsLibUrl: this.physicsLibUrl }))
+
+        this.worker.onmessage = (event: MessageEvent) => {
+          const { positions, quaternions } = event.data
+
+          this.messageFromWorker.positions = positions
+          this.messageFromWorker.quaternions = quaternions
+        }
       })
       .catch((err: Error) => {
         window.console.log(err.message)
       })
-
-    watch([ref(this.worker)], ([cur]: [cur: Worker]) => {
-      cur.onmessage = (event: MessageEvent) => {
-        const { positions, quaternions } = event.data
-
-        // Update rendering meshes
-        window.console.log('onmessage', positions, quaternions)
-
-        // thread processing speed adjustment
-        let delay = this.dt * 1000 - (Date.now() - this.sendTime)
-        if (delay > 0) {
-          delay = 0
-        }
-
-        window.setTimeout(this.sendDataToWorker, delay)
-      }
-    })
   }
 
   protected createWorkerTagScript () {

@@ -18,9 +18,11 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
+import * as THREE from 'three'
 import * as utils from '~/utils/common'
 import UseWebgl from '~/composables/threejs'
 import UseWebWorker from '~/composables/threejs/common/worker/UseWebWorker'
+import { UseAmbientLight, UsePointLight, UseShadow } from '~/composables/threejs/common/light'
 
 export default defineComponent({
   setup (props, context) {
@@ -37,7 +39,7 @@ export default defineComponent({
       clock
     } = UseWebgl({
       context,
-      isOrbitControl: false
+      isOrbitControl: true
     })
 
     return {
@@ -57,7 +59,20 @@ export default defineComponent({
     return {
       idAnimationFrame: null,
       selectorCanvasWrap: 'mouse-event-change-object',
-      iComposeWorker: null
+      iComposeWorker: null,
+      oldElapsedTime: 0,
+      physicsObjects: {}
+    }
+  },
+  watch: {
+    iComposeWorker: {
+      deep: true,
+      handler (cur) {
+        if (this.physicsObjects.sphere && cur.messageFromWorker.positions !== undefined) {
+          const [x, y, z] = cur.messageFromWorker.positions
+          this.physicsObjects.sphere.position.copy(new THREE.Vector3(x, y, z))
+        }
+      }
     }
   },
   mounted () {
@@ -72,6 +87,7 @@ export default defineComponent({
   },
   beforeDestroy () {
     window.cancelAnimationFrame(this.idAnimationFrame)
+    this.iComposeWorker.worker.terminate()
 
     const guiParentNode = document.querySelector(this.gui.parentSelector)
     guiParentNode.appendChild(this.gui.domElement)
@@ -79,14 +95,44 @@ export default defineComponent({
   },
   methods: {
     initUtils () {
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 32, 32),
+        new THREE.MeshStandardMaterial({ metalness: 0.3, roughness: 0.4 })
+      )
+      sphere.position.y = 0.5 + 3
 
+      const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(10, 10),
+        new THREE.MeshStandardMaterial({ color: '#777777', metalness: 0.3, roughness: 0.4 })
+      )
+      floor.rotation.x = -Math.PI * 0.5
+
+      this.scene.add(sphere, floor)
+      Object.assign(this.physicsObjects, { sphere })
+
+      this.cameraOrbit.position.set(0, 3, 8)
+
+      const { ambientLight } = UseAmbientLight(this.scene, { intensity: 0.7 })
+      const { pointLight } = UsePointLight({ scene: this.scene })
+      pointLight.position.y = 5
+
+      const {
+        toggleVisiblePointLightCameraHelper
+      } = UseShadow({
+        scene: this.scene,
+        renderer: this.renderer,
+        recieveMesh: floor,
+        castMeshs: [sphere, floor],
+        light: pointLight,
+        isUseCameraHelper: true
+      })
     },
     initWorkerPhysics () {
       const baseDomain = document.location.origin
-      utils.readStaticFile({ url: `${baseDomain}/threejs/cannon/business/test.js` })
+      utils.readStaticFile({ url: `${baseDomain}/threejs/cannon/business/click-random-drop-object.js` })
         .then((cannonWorldScript) => {
           const { iComposeWorker } = UseWebWorker({
-            N: 40,
+            N: 1,
             dt: 1 / 60,
             physicsLibUrl: `${baseDomain}/threejs/cannon/build/cannon.js`,
             physicsWorldScript: cannonWorldScript
@@ -94,10 +140,31 @@ export default defineComponent({
           this.iComposeWorker = iComposeWorker
         })
     },
+    sendDataToWorker (deltaTime) {
+      // thread processing speed adjustment
+      let delay = this.iComposeWorker.dt * 1000 - (Date.now() - this.iComposeWorker.sendTime)
+      if (delay > 0) {
+        delay = 0
+      }
+
+      window.setTimeout(() => {
+        this.iComposeWorker.sendDataToWorker({
+          action: 'step',
+          timeSinceLastCalled: deltaTime,
+          maxSubSteps: 3
+        })
+      }, delay)
+    },
     tick () {
       const elapsedTime = this.clock.getElapsedTime()
+      const deltaTime = elapsedTime - this.oldElapsedTime
+      this.oldElapsedTime = elapsedTime
+
+      this.sendDataToWorker(deltaTime)
 
       this.renderer.render(this.scene, this.cameraOrbit)
+
+      this.orbitControl.update()
 
       this.idAnimationFrame = window.requestAnimationFrame(this.tick)
     },
