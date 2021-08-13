@@ -61,7 +61,8 @@ export default defineComponent({
       selectorCanvasWrap: 'mouse-event-change-object',
       iComposeWorker: null,
       oldElapsedTime: 0,
-      physicsObjects: {}
+      physicsObjects: {},
+      debugObject: {}
     }
   },
   watch: {
@@ -79,11 +80,10 @@ export default defineComponent({
     this.setCanvas({ vm: this })
     this.registerRenderTickCanvas(() => {
       this.initUtils()
+      this.initWorkerPhysics()
       this.setStyleDatGui()
       this.tick()
     })
-
-    this.initWorkerPhysics()
   },
   beforeDestroy () {
     window.cancelAnimationFrame(this.idAnimationFrame)
@@ -94,21 +94,28 @@ export default defineComponent({
     this.gui.destroy()
   },
   methods: {
-    initUtils () {
+    createShpereMesh () {
       const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(0.5, 32, 32),
         new THREE.MeshStandardMaterial({ metalness: 0.3, roughness: 0.4 })
       )
       sphere.position.y = 0.5 + 3
-
+      this.scene.add(sphere)
+      Object.assign(this.physicsObjects, { sphere })
+    },
+    initUtils () {
       const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10),
         new THREE.MeshStandardMaterial({ color: '#777777', metalness: 0.3, roughness: 0.4 })
       )
       floor.rotation.x = -Math.PI * 0.5
+      this.scene.add(floor)
+      Object.assign(this.physicsObjects, { floor })
 
-      this.scene.add(sphere, floor)
-      Object.assign(this.physicsObjects, { sphere })
+      // todo multiple objects
+      this.createShpereMesh()
+      // this.debugObject.createShpereMesh = this.createShpereMesh
+      // this.gui.add(this.debugObject, 'createShpereMesh')
 
       this.cameraOrbit.position.set(0, 3, 8)
 
@@ -122,7 +129,7 @@ export default defineComponent({
         scene: this.scene,
         renderer: this.renderer,
         recieveMesh: floor,
-        castMeshs: [sphere, floor],
+        castMeshs: Object.keys(this.physicsObjects).reduce((a, key) => a.concat(this.physicsObjects[key]), []),
         light: pointLight,
         isUseCameraHelper: true
       })
@@ -131,9 +138,10 @@ export default defineComponent({
       const baseDomain = document.location.origin
       utils.readStaticFile({ url: `${baseDomain}/threejs/cannon/business/click-random-drop-object.js` })
         .then((cannonWorldScript) => {
+          const STATIC_FPS = 60
           const { iComposeWorker } = UseWebWorker({
             N: 1,
-            dt: 1 / 60,
+            dt: 1 / STATIC_FPS,
             physicsLibUrl: `${baseDomain}/threejs/cannon/build/cannon.js`,
             physicsWorldScript: cannonWorldScript
           })
@@ -141,6 +149,8 @@ export default defineComponent({
         })
     },
     sendDataToWorker (deltaTime) {
+      if (this.iComposeWorker === null) { return }
+
       // thread processing speed adjustment
       let delay = this.iComposeWorker.dt * 1000 - (Date.now() - this.iComposeWorker.sendTime)
       if (delay > 0) {
@@ -150,6 +160,7 @@ export default defineComponent({
       window.setTimeout(() => {
         this.iComposeWorker.sendDataToWorker({
           action: 'step',
+          dt: this.iComposeWorker.dt,
           timeSinceLastCalled: deltaTime,
           maxSubSteps: 3
         })
