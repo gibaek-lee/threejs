@@ -104,6 +104,8 @@ export default defineComponent({
         new THREE.MeshStandardMaterial({ metalness: 0.3, roughness: 0.4 })
       )
       sphere.position.y = 0.5 + 3
+      sphere.castShadow = true
+
       this.scene.add(sphere)
       this.physicsObjects.push(sphere)
     },
