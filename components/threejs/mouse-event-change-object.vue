@@ -61,7 +61,8 @@ export default defineComponent({
       selectorCanvasWrap: 'mouse-event-change-object',
       iComposeWorker: null,
       oldElapsedTime: 0,
-      physicsObjects: {},
+      deltaTime: 0,
+      physicsObjects: [],
       debugObject: {}
     }
   },
@@ -69,10 +70,13 @@ export default defineComponent({
     iComposeWorker: {
       deep: true,
       handler (cur) {
-        if (this.physicsObjects.sphere && cur.messageFromWorker.positions !== undefined) {
-          const [x, y, z] = cur.messageFromWorker.positions
-          this.physicsObjects.sphere.position.copy(new THREE.Vector3(x, y, z))
-        }
+        this.physicsObjects.filter(o => o.geometry.type === 'SphereGeometry').forEach((sphere, index) => {
+          sphere.position.set(
+            cur.messageFromWorker.positions[3 * index + 0],
+            cur.messageFromWorker.positions[3 * index + 1],
+            cur.messageFromWorker.positions[3 * index + 2]
+          )
+        })
       }
     }
   },
@@ -101,7 +105,7 @@ export default defineComponent({
       )
       sphere.position.y = 0.5 + 3
       this.scene.add(sphere)
-      Object.assign(this.physicsObjects, { sphere })
+      this.physicsObjects.push(sphere)
     },
     initUtils () {
       const floor = new THREE.Mesh(
@@ -110,12 +114,10 @@ export default defineComponent({
       )
       floor.rotation.x = -Math.PI * 0.5
       this.scene.add(floor)
-      Object.assign(this.physicsObjects, { floor })
+      this.physicsObjects.push(floor)
 
-      // todo multiple objects
-      this.createShpereMesh()
-      // this.debugObject.createShpereMesh = this.createShpereMesh
-      // this.gui.add(this.debugObject, 'createShpereMesh')
+      this.debugObject.createShpereMesh = this.createShpereMesh
+      this.gui.add(this.debugObject, 'createShpereMesh')
 
       this.cameraOrbit.position.set(0, 3, 8)
 
@@ -129,7 +131,7 @@ export default defineComponent({
         scene: this.scene,
         renderer: this.renderer,
         recieveMesh: floor,
-        castMeshs: Object.keys(this.physicsObjects).reduce((a, key) => a.concat(this.physicsObjects[key]), []),
+        castMeshs: this.physicsObjects,
         light: pointLight,
         isUseCameraHelper: true
       })
@@ -140,7 +142,7 @@ export default defineComponent({
         .then((cannonWorldScript) => {
           const STATIC_FPS = 60
           const { iComposeWorker } = UseWebWorker({
-            N: 1,
+            N: 0,
             dt: 1 / STATIC_FPS,
             physicsLibUrl: `${baseDomain}/threejs/cannon/build/cannon.js`,
             physicsWorldScript: cannonWorldScript
@@ -160,18 +162,20 @@ export default defineComponent({
       window.setTimeout(() => {
         this.iComposeWorker.sendDataToWorker({
           action: 'step',
-          dt: this.iComposeWorker.dt,
           timeSinceLastCalled: deltaTime,
-          maxSubSteps: 3
+          maxSubSteps: 3,
+          physicsObjects: this.physicsObjects.reduce((a, c) => a.concat(c.geometry.type), [])
         })
       }, delay)
     },
     tick () {
       const elapsedTime = this.clock.getElapsedTime()
-      const deltaTime = elapsedTime - this.oldElapsedTime
+      this.deltaTime = elapsedTime - this.oldElapsedTime
       this.oldElapsedTime = elapsedTime
 
-      this.sendDataToWorker(deltaTime)
+      if (this.physicsObjects.length > 0) {
+        this.sendDataToWorker(this.deltaTime)
+      }
 
       this.renderer.render(this.scene, this.cameraOrbit)
 

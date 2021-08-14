@@ -90,12 +90,14 @@ class ComposeWebWorker {
   public sendDataToWorker (data: {
     action: string, // 'step'
     timeSinceLastCalled: number,
-    maxSubSteps: 3
+    maxSubSteps: number,
+    physicsObjects: string[]
   }) {
     this.sendTime = Date.now()
 
-    const positions = new Float32Array(this.N * 3)
-    const quaternions = new Float32Array(this.N * 4)
+    const numberObjects = data.physicsObjects.filter(o => o === 'SphereGeometry').length
+    const positions = new Float32Array(numberObjects * 3)
+    const quaternions = new Float32Array(numberObjects * 4)
 
     // todoc validate fps: 60 기준 ComposeWebWorker.THRESHOLD_FPS_DIFF 범위의 메세지만 보낸다.
     //
