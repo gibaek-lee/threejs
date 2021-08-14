@@ -1,5 +1,9 @@
 <template>
-  <v-row justify="center" align="center">
+  <v-row
+    class="page-intro"
+    justify="center"
+    align="center"
+  >
     <v-col cols="12" sm="8" md="6">
       <v-card class="logo py-4 d-flex justify-center">
         <ThreejsLogo />
@@ -103,6 +107,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.page-intro {
+  height: calc(100vh - 100px);
+  overflow: auto;
+}
+
 .canvas-playground-list {
   flex-wrap: wrap;
   flex-direction: column;
