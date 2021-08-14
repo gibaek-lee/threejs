@@ -18,9 +18,9 @@
     "icon": "mdi-call-split"
   },
   {
-    "id": "mouse-event-change-object",
-    "langset": "Mouse Event Change Object",
-    "path": "/playground/mouse-event-change-object",
+    "id": "physics-engine-with-web-worker",
+    "langset": "Physics Engine with Web Worker",
+    "path": "/playground/physics-engine-with-web-worker",
     "icon": "mdi-wrench"
   },
   {

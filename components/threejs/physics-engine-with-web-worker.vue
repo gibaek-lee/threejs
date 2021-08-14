@@ -58,7 +58,7 @@ export default defineComponent({
   data () {
     return {
       idAnimationFrame: null,
-      selectorCanvasWrap: 'mouse-event-change-object',
+      selectorCanvasWrap: 'physics-engine-with-web-worker',
       iComposeWorker: null,
       oldElapsedTime: 0,
       deltaTime: 0,
@@ -192,7 +192,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.mouse-event-change-object-container {
+.physics-engine-with-web-worker-container {
   height: 100%;
 
   .col-controls {
