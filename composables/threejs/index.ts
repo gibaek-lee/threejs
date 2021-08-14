@@ -121,6 +121,7 @@ export default function UseWebgl ({
       if (isReadyCanvasRenderTick.value) {
         callbackTick()
         window.clearInterval(intervalId)
+        return
       }
 
       // error handling
