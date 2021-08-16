@@ -46,6 +46,7 @@ $ npm run deploy # deploy to githubpages
 ### `three.js 참고자료`
 
 [three.js org document](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)<br>
-[three.js journey](https://threejs-journey.xyz/)
-<br>
-[glTF-Sample-Models](https://github.com/KhronosGroup/glTF-Sample-Models)
+[three.js journey](https://threejs-journey.xyz/)<br>
+[glTF-Sample-Models](https://github.com/KhronosGroup/glTF-Sample-Models)<br>
+[cannon.js document](https://schteppe.github.io/cannon.js/docs/)<br>
+[web worker with three.js example](https://schteppe.github.io/cannon.js/examples/worker.html)
