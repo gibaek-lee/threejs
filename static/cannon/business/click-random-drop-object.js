@@ -1,3 +1,15 @@
+/**
+ * cannon.js reference
+ * https://schteppe.github.io/cannon.js/docs/
+ */
+
+/**
+ * fixme
+ * 1. static 폴더에 있으므로 nuxt 빌드를 거치지 않아 파일이 버전관리 되지 안아 캐싱 문제를 일으킬 수 있다. shell script를 짜서 npm run generate에 이어 해시 스트링을 붙이는 과정을 추가하던지, 아니면 nuxt 빌드 패스 안으로 넣는 것을 고민하자.
+ * 2. cannon.js 폴더가 static으로 들어가고 있어 코드 분석에 javascript 비율이 지나치게 높아져 있다. nuxt 빌드 패스 내부로 넣는 방법을 고민하자.
+ * 3. 타입 추적이 어려우므로 typescript 도입 방법이 필요하다. 역시 nuxt 빌드 패스 안으로 넣는 방법을 고민하자.
+ */
+
 let world
 let sphereBody
 let floorBody
