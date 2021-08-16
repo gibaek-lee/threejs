@@ -1,3 +1,8 @@
+/**
+ * three.js & web worker reference
+ * https://schteppe.github.io/cannon.js/examples/worker.html
+ */
+
 interface IParamUseWebWorker {
   N: number
   dt: number
