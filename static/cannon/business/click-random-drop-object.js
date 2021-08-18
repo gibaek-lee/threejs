@@ -72,9 +72,18 @@ self.onmessage = function (event) {
 
       world.bodies.forEach((wBody, index) => {
         if (wBody.shapes[0].type === 1) { // type 1: sphere
-          positions[3 * (index - 1) + 0] = wBody.position.x
-          positions[3 * (index - 1) + 1] = wBody.position.y
-          positions[3 * (index - 1) + 2] = wBody.position.z
+          if (wBody.position) {
+            positions[3 * (index - 1) + 0] = wBody.position.x
+            positions[3 * (index - 1) + 1] = wBody.position.y
+            positions[3 * (index - 1) + 2] = wBody.position.z
+          }
+
+          if (wBody.quaternions) {
+            quaternions[4 * (index - 1) + 0] = wBody.quaternions.x
+            quaternions[4 * (index - 1) + 1] = wBody.quaternions.y
+            quaternions[4 * (index - 1) + 2] = wBody.quaternions.z
+            quaternions[4 * (index - 1) + 3] = wBody.quaternions.w
+          }
         }
       })
 
@@ -103,9 +112,14 @@ function createSphereBody () {
   const sphereShape = new CANNON.Sphere(0.5)
   sphereBody = new CANNON.Body({
     mass: 1,
-    position: new CANNON.Vec3(0, 3, 0),
+    // position: new CANNON.Vec3(0, 3.5, 0),
     shape: sphereShape,
     material: defaultContactMaterial
   })
+  sphereBody.position.set(
+    Math.random() * 3 - 0.5,
+    Math.random() * 6 + 0.5,
+    Math.random() * 3 - 0.5
+  )
   world.addBody(sphereBody)
 }
