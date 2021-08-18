@@ -70,13 +70,29 @@ export default defineComponent({
     iComposeWorker: {
       deep: true,
       handler (cur) {
-        this.physicsObjects.filter(o => o.geometry.type === 'SphereGeometry').forEach((sphere, index) => {
-          sphere.position.set(
-            cur.messageFromWorker.positions[3 * index + 0],
-            cur.messageFromWorker.positions[3 * index + 1],
-            cur.messageFromWorker.positions[3 * index + 2]
-          )
-        })
+        this.physicsObjects.filter(o => o.geometry.type === 'SphereGeometry')
+          .forEach((sphere, index) => {
+            if (cur.messageFromWorker.positions) {
+              sphere.position.set(
+                cur.messageFromWorker.positions[3 * index + 0],
+                cur.messageFromWorker.positions[3 * index + 1],
+                cur.messageFromWorker.positions[3 * index + 2]
+              )
+            }
+            if (cur.messageFromWorker.quaternions) {
+              sphere.quaternion.set(
+                cur.messageFromWorker.quaternions[4 * index + 0],
+                cur.messageFromWorker.quaternions[4 * index + 1],
+                cur.messageFromWorker.quaternions[4 * index + 2],
+                cur.messageFromWorker.quaternions[4 * index + 3]
+              )
+            }
+
+            const isNotMeshOnScene = this.scene.children.every(m => m.uuid !== sphere.uuid)
+            if (isNotMeshOnScene) {
+              this.scene.add(sphere)
+            }
+          })
       }
     }
   },
@@ -87,6 +103,18 @@ export default defineComponent({
       this.initWorkerPhysics()
       this.setStyleDatGui()
       this.tick()
+
+      const MAX_NUM_SPHERE = 100
+      const intervalId = window.setInterval(() => {
+        const numSphere = this.physicsObjects.filter(o => o.geometry.type === 'SphereGeometry').length
+
+        if (numSphere >= MAX_NUM_SPHERE) {
+          window.clearInterval(intervalId)
+          return
+        }
+
+        this.createSphereMesh()
+      }, 100)
     })
   },
   beforeDestroy () {
@@ -98,28 +126,34 @@ export default defineComponent({
     this.gui.destroy()
   },
   methods: {
-    createShpereMesh () {
+    createSphereMesh () {
       const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(0.5, 32, 32),
         new THREE.MeshStandardMaterial({ metalness: 0.3, roughness: 0.4 })
       )
-      sphere.position.y = 0.5 + 3
       sphere.castShadow = true
 
-      this.scene.add(sphere)
+      /**
+       * todoc 아래 두 주석의 이유
+       * 미리 scene에 넣어놓거나 포지션을 정해놓으면 physics world의 body 정보와 매칭되지 않는다.
+       * 그러므로 physics world로 부터 messageFromWorker가 있을 때 mesh의 position을 정하고 scene에 add 해야한다.
+       */
+      // sphere.position.set(0, 6 + 0.5, 0)
+      // this.scene.add(sphere)
+
       this.physicsObjects.push(sphere)
     },
     initUtils () {
       const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(10, 10),
+        new THREE.PlaneGeometry(100, 100),
         new THREE.MeshStandardMaterial({ color: '#777777', metalness: 0.3, roughness: 0.4 })
       )
       floor.rotation.x = -Math.PI * 0.5
       this.scene.add(floor)
       this.physicsObjects.push(floor)
 
-      this.debugObject.createShpereMesh = this.createShpereMesh
-      this.gui.add(this.debugObject, 'createShpereMesh')
+      this.debugObject.createSphereMesh = this.createSphereMesh
+      this.gui.add(this.debugObject, 'createSphereMesh')
 
       this.cameraOrbit.position.set(0, 3, 8)
 
