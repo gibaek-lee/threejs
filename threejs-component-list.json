@@ -1,0 +1,32 @@
+[
+  {
+    "id": "music-visualizer",
+    "langset": "Music Visualizer",
+    "path": "/playground/music-visualizer",
+    "icon": "mdi-chart-bubble"
+  },
+  {
+    "id": "haunted-house",
+    "langset": "Haunted House",
+    "path": "/playground/haunted-house",
+    "icon": "mdi-lifebuoy"
+  },
+  {
+    "id": "animate-model-import",
+    "langset": "Animate Model Import",
+    "path": "/playground/animate-model-import",
+    "icon": "mdi-call-split"
+  },
+  {
+    "id": "physics-engine-with-web-worker",
+    "langset": "Physics Engine with Web Worker",
+    "path": "/playground/physics-engine-with-web-worker",
+    "icon": "mdi-wrench"
+  },
+  {
+    "id": "laboratory-webgl",
+    "langset": "Laboratory Webgl",
+    "path": "/playground/laboratory-webgl",
+    "icon": "mdi-dialpad"
+  }
+]
