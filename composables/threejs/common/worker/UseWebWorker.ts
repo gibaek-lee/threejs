@@ -22,7 +22,7 @@ class ComposeWebWorker {
   protected sendTime: number
   protected physicsLibUrl: string
   protected physicsWorldScript: string
-  public worker: Worker | any // fixme Worker interface로 정의해야 하지만 constructor 스코프에서 초기화 하지 않으므로 any로 해둠
+  public worker: Worker
   public messageFromWorker: IMessageFromWorker
   static THRESHOLD_FPS = 80
 
@@ -39,6 +39,12 @@ class ComposeWebWorker {
       positions: undefined,
       quaternions: undefined
     }
+
+    /**
+     * todoc & fixme Worker interface로 정의 위해서 constructor 스코프에서 초기해야 함
+     * 아래 init 내부 createWorker에서 worker.terminate() 하고 worker에 재할당 한다.
+     */
+    this.worker = new Worker('')
 
     this.init()
   }
@@ -83,6 +89,8 @@ class ComposeWebWorker {
         reject(new Error('element id worker was not found'))
         return
       }
+
+      this.worker.terminate() // todoc & fixme constructor interface 정의용 불필요한 worker 제거
 
       const blob = new Blob([workerElement.textContent as BlobPart], { type: 'text/javascript' })
       const worker = new Worker(window.URL.createObjectURL(blob))
