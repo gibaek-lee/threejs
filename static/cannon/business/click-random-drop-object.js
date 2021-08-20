@@ -19,81 +19,75 @@ let defaultContactMaterial
 let bodies = []
 
 self.onmessage = function (event) {
-  const { physicsLibUrl } = event.data
-
-  if (physicsLibUrl && !world) {
-    // load physics script
-    self.importScripts(physicsLibUrl)
-
-    // world init
-    world = new CANNON.World()
-    world.gravity.set(0, -9.82, 0)
-    self.console.log('@@@canon world generated', world, CANNON)
-
-    // contact
-    const defaultMaterial = new CANNON.Material('default')
-    defaultContactMaterial = new CANNON.ContactMaterial(
-      defaultMaterial,
-      defaultMaterial,
-      {
-        friction: 0.1,
-        restitution: 0.7
+  const invokeModeAction = {
+    init: () => {
+      const { physicsLibUrl } = event.data
+      if (!physicsLibUrl) {
+        self.console.error('physicsLibUrl is not defined')
+        return
       }
-    )
-    world.addContactMaterial(defaultContactMaterial)
 
-    self.postMessage({ isWorldReady: true })
-  }
-
-  if (world) {
-    const {
-      action, // todoc 컴포넌트 tick에서 보내는 행동 인터페이스 'step' |
-      dt, timeSinceLastCalled, maxSubSteps,
-      physicsObjects = []
-    } = event.data
-    positions = event.data.positions
-    quaternions = event.data.quaternions
-
-    // fixme 같은 이름 여러개면 추가된걸로 취급되지 않는다
-    const diffBodies = physicsObjects.slice(bodies.length)
-    if (diffBodies.length > 0) {
-      bodies = physicsObjects
-
-      if (diffBodies.includes('PlaneGeometry')) {
-        createFloorBody()
+      try {
+        world = initPhysicsWorld(self, physicsLibUrl)
+      } catch (e) {
+        self.console.log(e.message)
       }
-      if (diffBodies.includes('SphereGeometry')) {
-        createSphereBody()
+      initWorldMaterialContact(world)
+
+      self.postMessage({ isWorldReady: true })
+    },
+    recieve: () => {
+      const {
+        action, // todo 컴포넌트 tick에서 보내는 행동 인터페이스 작성 - 'step' |
+        dt, timeSinceLastCalled, maxSubSteps,
+        physicsObjects = []
+      } = event.data
+      positions = event.data.positions
+      quaternions = event.data.quaternions
+
+      createNewBody(physicsObjects)
+
+      if (action === 'step') {
+        worldStepCalculate(dt, timeSinceLastCalled, maxSubSteps)
+
+        self.postMessage({ // worldStepCalculate과 동기적으로 실행되야 한다
+          isWorldReady: true,
+          positions,
+          quaternions
+        }, [positions.buffer, quaternions.buffer])
       }
-    }
-
-    if (action === 'step') {
-      world.step(dt, timeSinceLastCalled, maxSubSteps)
-
-      world.bodies.forEach((wBody, index) => {
-        if (wBody.shapes[0].type === 1) { // type 1: sphere
-          if (wBody.position) {
-            positions[3 * (index - 1) + 0] = wBody.position.x
-            positions[3 * (index - 1) + 1] = wBody.position.y
-            positions[3 * (index - 1) + 2] = wBody.position.z
-          }
-
-          if (wBody.quaternions) {
-            quaternions[4 * (index - 1) + 0] = wBody.quaternions.x
-            quaternions[4 * (index - 1) + 1] = wBody.quaternions.y
-            quaternions[4 * (index - 1) + 2] = wBody.quaternions.z
-            quaternions[4 * (index - 1) + 3] = wBody.quaternions.w
-          }
-        }
-      })
-
-      self.postMessage({
-        isWorldReady: true,
-        positions,
-        quaternions
-      }, [positions.buffer, quaternions.buffer])
+    },
+    error: () => {
+      self.console.error('mode worker onmessage is not defined')
     }
   }
+
+  const mode = world ? 'recieve' : 'init'
+  const invoker = invokeModeAction[mode] || invokeModeAction.error
+  invoker()
+}
+
+function initPhysicsWorld (self, physicsLibUrl) {
+  self.importScripts(physicsLibUrl)
+
+  world = new CANNON.World()
+  world.gravity.set(0, -9.82, 0)
+  self.console.log('@@@canon world generated', world, CANNON)
+
+  return world
+}
+
+function initWorldMaterialContact (world) {
+  const defaultMaterial = new CANNON.Material('default')
+  defaultContactMaterial = new CANNON.ContactMaterial(
+    defaultMaterial,
+    defaultMaterial,
+    {
+      friction: 0.1,
+      restitution: 0.7
+    }
+  )
+  world.addContactMaterial(defaultContactMaterial)
 }
 
 function createFloorBody () {
@@ -122,4 +116,39 @@ function createSphereBody () {
     Math.random() * 3 - 0.5
   )
   world.addBody(sphereBody)
+}
+
+function createNewBody (physicsObjects) {
+  const diffBodies = physicsObjects.slice(bodies.length)
+  if (diffBodies.length > 0) {
+    bodies = physicsObjects
+
+    if (diffBodies.includes('PlaneGeometry')) {
+      createFloorBody()
+    }
+    if (diffBodies.includes('SphereGeometry')) {
+      createSphereBody()
+    }
+  }
+}
+
+function worldStepCalculate (dt, timeSinceLastCalled, maxSubSteps,) {
+  world.step(dt, timeSinceLastCalled, maxSubSteps)
+
+  world.bodies.forEach((wBody, index) => {
+    if (wBody.shapes[0].type === 1) { // type 1: sphere
+      if (wBody.position) {
+        positions[3 * (index - 1) + 0] = wBody.position.x
+        positions[3 * (index - 1) + 1] = wBody.position.y
+        positions[3 * (index - 1) + 2] = wBody.position.z
+      }
+
+      if (wBody.quaternions) { // fixme type 1 sphere에는 quaternion이 없다. 육면체 타입 추가하면 거기로 이동
+        quaternions[4 * (index - 1) + 0] = wBody.quaternions.x
+        quaternions[4 * (index - 1) + 1] = wBody.quaternions.y
+        quaternions[4 * (index - 1) + 2] = wBody.quaternions.z
+        quaternions[4 * (index - 1) + 3] = wBody.quaternions.w
+      }
+    }
+  })
 }

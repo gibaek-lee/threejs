@@ -66,33 +66,42 @@ export default defineComponent({
       debugObject: {}
     }
   },
+  computed: {
+    sphereMeshes () {
+      return this.physicsObjects.filter(o => o.geometry.type === 'SphereGeometry')
+    },
+    messageFromWorker () {
+      return this.iComposeWorker ? this.iComposeWorker.messageFromWorker : {}
+    }
+  },
   watch: {
-    iComposeWorker: {
+    messageFromWorker: {
       deep: true,
       handler (cur) {
-        this.physicsObjects.filter(o => o.geometry.type === 'SphereGeometry')
-          .forEach((sphere, index) => {
-            if (cur.messageFromWorker.positions) {
-              sphere.position.set(
-                cur.messageFromWorker.positions[3 * index + 0],
-                cur.messageFromWorker.positions[3 * index + 1],
-                cur.messageFromWorker.positions[3 * index + 2]
-              )
-            }
-            if (cur.messageFromWorker.quaternions) {
-              sphere.quaternion.set(
-                cur.messageFromWorker.quaternions[4 * index + 0],
-                cur.messageFromWorker.quaternions[4 * index + 1],
-                cur.messageFromWorker.quaternions[4 * index + 2],
-                cur.messageFromWorker.quaternions[4 * index + 3]
-              )
-            }
+        const { positions, quaternions } = cur
 
-            const isNotMeshOnScene = this.scene.children.every(m => m.uuid !== sphere.uuid)
-            if (isNotMeshOnScene) {
-              this.scene.add(sphere)
-            }
-          })
+        this.sphereMeshes.forEach((sphere, index) => {
+          if (positions) {
+            sphere.position.set(
+              positions[3 * index + 0],
+              positions[3 * index + 1],
+              positions[3 * index + 2]
+            )
+          }
+          if (quaternions) {
+            sphere.quaternion.set(
+              quaternions[4 * index + 0],
+              quaternions[4 * index + 1],
+              quaternions[4 * index + 2],
+              quaternions[4 * index + 3]
+            )
+          }
+
+          const isNotMeshOnScene = this.scene.children.every(m => m.uuid !== sphere.uuid)
+          if (isNotMeshOnScene) {
+            this.scene.add(sphere)
+          }
+        })
       }
     }
   },
