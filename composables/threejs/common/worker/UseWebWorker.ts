@@ -22,9 +22,9 @@ class ComposeWebWorker {
   protected sendTime: number
   protected physicsLibUrl: string
   protected physicsWorldScript: string
-  public worker: Worker | any // fixme Worker interface로 정의해야 하지만 constructor 스코프에서 초기화 하지 않으므로 any로 해둠
+  public worker: Worker
   public messageFromWorker: IMessageFromWorker
-  static THRESHOLD_FPS_DIFF = 40
+  static THRESHOLD_FPS = 80
 
   constructor ({
     N, dt, physicsLibUrl, physicsWorldScript
@@ -39,6 +39,12 @@ class ComposeWebWorker {
       positions: undefined,
       quaternions: undefined
     }
+
+    /**
+     * todoc & fixme Worker interface로 정의 위해서 constructor 스코프에서 초기해야 함
+     * 아래 init 내부 createWorker에서 worker.terminate() 하고 worker에 재할당 한다.
+     */
+    this.worker = new Worker('')
 
     this.init()
   }
@@ -84,6 +90,8 @@ class ComposeWebWorker {
         return
       }
 
+      this.worker.terminate() // todoc & fixme constructor interface 정의용 불필요한 worker 제거
+
       const blob = new Blob([workerElement.textContent as BlobPart], { type: 'text/javascript' })
       const worker = new Worker(window.URL.createObjectURL(blob))
       this.worker = worker
@@ -104,14 +112,14 @@ class ComposeWebWorker {
     const positions = new Float32Array(numberObjects * 3)
     const quaternions = new Float32Array(numberObjects * 4)
 
-    // todoc validate fps: 60 기준 ComposeWebWorker.THRESHOLD_FPS_DIFF 범위의 메세지만 보낸다.
-    //
-    // fixme
-    // 이러면 프레임드랍이 있지 않나? 하지만 이게 없으면 지나치게 physics world.step이 적게 진행되거나 많이 진행되므로
-    // 렌더 시 오히려 중간에 프레임 없이 순간이동 한것처럼 보인다.
+    /**
+     * todoc validate fps: 60 기준 ComposeWebWorker.THRESHOLD_FPS 보다 작은 메세지만 보낸다.
+     * 이게 없으면 지나치게 세밀한 physics world.step이 진행되어 불필요한 연산량이 많아진다.
+     * 적당한 fps 범위의 threshold 설정은 성능 향상에 도움이 된다.
+     */
     const curFps = 1 / data.timeSinceLastCalled
-    if (Math.abs(curFps - (1 / this.dt)) > ComposeWebWorker.THRESHOLD_FPS_DIFF) {
-      window.console.log('Drop message. FPS difference: ', Math.abs(curFps - (1 / this.dt)))
+    if ((curFps - (1 / this.dt)) > ComposeWebWorker.THRESHOLD_FPS) {
+      window.console.log('Drop message. FPS difference: ', (curFps - (1 / this.dt)))
       return
     }
     // todoc

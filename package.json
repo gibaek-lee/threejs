@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate",
+    "dev": "npm run compile:ts_cannon && nuxt",
+    "generate": "npm run compile:ts_cannon && nuxt generate",
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup",
+    "compile:ts_cannon": "tsc static/cannon/business/*.ts",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint": "npm run lint:js",
     "test": "jest"
@@ -29,6 +30,7 @@
     "@nuxtjs/eslint-config-typescript": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/vuetify": "^1.12.1",
+    "@types/cannon": "^0.1.7",
     "@types/dat.gui": "^0.7.7",
     "@types/three": "^0.130.0",
     "@vue/test-utils": "^1.2.1",
