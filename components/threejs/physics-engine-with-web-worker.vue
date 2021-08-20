@@ -183,7 +183,7 @@ export default defineComponent({
     },
     initWorkerPhysics () {
       const baseDomain = document.location.origin
-      utils.readStaticFile({ url: `${baseDomain}/threejs/cannon/business/click-random-drop-object.js` })
+      utils.readStaticFile({ url: `${baseDomain}/threejs/cannon/business/drop-bodies.js` })
         .then((cannonWorldScript) => {
           const STATIC_FPS = 60
           const { iComposeWorker } = UseWebWorker({

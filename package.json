@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "tsc static/cannon/business/*.ts && nuxt generate",
+    "dev": "npm run compile:ts_cannon && nuxt",
+    "generate": "npm run compile:ts_cannon && nuxt generate",
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup",
+    "compile:ts_cannon": "tsc static/cannon/business/*.ts",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint": "npm run lint:js",
     "test": "jest"

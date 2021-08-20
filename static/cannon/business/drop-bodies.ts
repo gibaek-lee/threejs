@@ -1,6 +1,6 @@
 /**
  * [cannon worker business 로직]
- * 
+ *
  * cannon.js docs: https://schteppe.github.io/cannon.js/docs/
  *
  * @types/cannon interface: https://www.npmjs.com/package/@types/cannon
@@ -97,6 +97,12 @@ function initPhysicsWorld (physicsLibUrl: string) {
 
   world = new CANNON.World()
   world.gravity.set(0, -9.82, 0)
+
+  // 최적화
+  world.broadphase = new CANNON.SAPBroadphase(world)
+  world.allowSleep = true
+  //
+
   self.console.log('@@@canon world generated', world, CANNON)
 
   return world
@@ -127,18 +133,19 @@ function createFloorBody () {
   world.addBody(floorBody)
 }
 
-function createSphereBody () {
-  const sphereShape = new CANNON.Sphere(0.5)
+function createSphereBody (radius: number = 0.5) {
+  const sphereShape = new CANNON.Sphere(radius)
   const sphereBody = new CANNON.Body({
     mass: 1,
-    // position: new CANNON.Vec3(0, 3.5, 0),
     shape: sphereShape,
     material: defaultMaterial
   })
+
+  const heightDefault = 3
   sphereBody.position.set(
-    Math.random() * 3 - 0.5,
-    Math.random() * 6 + 0.5,
-    Math.random() * 3 - 0.5
+    Math.random() * 3 - radius,
+    Math.random() * 6 + heightDefault,
+    Math.random() * 3 - radius
   )
   world.addBody(sphereBody)
 }
