@@ -13,7 +13,7 @@
 import { defineComponent } from '@vue/composition-api'
 import * as THREE from 'three'
 import UseWebgl from '~/composables/threejs'
-import { UseAmbientLight } from '~/composables/threejs/common/light'
+import { UseAmbientLight, UseDirectionalLight, UseShadow } from '~/composables/threejs/common/light'
 import UseGLTF, { E_GLTF } from '~/composables/threejs/common/gltf/UseGLTF'
 
 export default defineComponent({
@@ -54,6 +54,7 @@ export default defineComponent({
       selectorCanvasWrap: 'custom-model-blender',
       guiParams: {},
       ambientLight: null,
+      directionalLight: null,
       basePlane: null,
       iGLTF: null
     }
@@ -63,11 +64,14 @@ export default defineComponent({
       deep: true,
       handler (cur) {
         const {
-          intensityAmbientLight, scalePlane, scaleHamburger
+          intensityAmbientLight, intensityDirectionalLight, scalePlane, scaleHamburger
         } = cur
 
         if (intensityAmbientLight) {
           this.ambientLight.intensity = intensityAmbientLight
+        }
+        if (intensityDirectionalLight) {
+          this.directionalLight.intensity = intensityDirectionalLight
         }
         if (scalePlane) {
           this.basePlane.scale.set(scalePlane, scalePlane, 1)
@@ -98,14 +102,16 @@ export default defineComponent({
   methods: {
     initUtils () {
       this.guiParams = Object.assign({
-        intensityAmbientLight: 0.7,
+        intensityAmbientLight: 0.3,
+        intensityDirectionalLight: 0.7,
         scalePlane: 3,
         scaleHamburger: 1
       }, {})
 
       this.gui.add(this.guiParams, 'intensityAmbientLight').min(0).max(1).step(0.01)
+      this.gui.add(this.guiParams, 'intensityDirectionalLight').min(0).max(1).step(0.01)
       this.gui.add(this.guiParams, 'scalePlane').min(1).max(10).step(1)
-      this.gui.add(this.guiParams, 'scaleHamburger').min(0.01).max(0.5).step(0.001)
+      this.gui.add(this.guiParams, 'scaleHamburger').min(0.01).max(2).step(0.001)
 
       // lights
       const { ambientLight } = UseAmbientLight(
@@ -113,6 +119,15 @@ export default defineComponent({
         { intensity: this.guiParams.intensityAmbientLight }
       )
       this.ambientLight = ambientLight
+
+      const { directionalLight } = UseDirectionalLight(
+        this.scene,
+        {
+          intensity: this.guiParams.intensityDirectionalLight,
+          position3: new THREE.Vector3(-20.25, 10, -20.25)
+        }
+      )
+      this.directionalLight = directionalLight
 
       // meshes
       const planeWidth = 30
@@ -129,13 +144,26 @@ export default defineComponent({
           const { scaleHamburger } = this.guiParams
 
           gltf.scene.scale.set(scaleHamburger, scaleHamburger, scaleHamburger)
+          gltf.scene.position.y = 2
           gltf.scene.rotateY(Math.PI / 4)
           this.scene.add(gltf.scene)
+
+          // shadow
+          const {
+            toggleVisiblePointLightCameraHelper
+          } = UseShadow({
+            scene: this.scene,
+            renderer: this.renderer,
+            recieveMesh: this.basePlane,
+            castMeshs: [this.iGLTF.scene],
+            light: this.directionalLight,
+            isUseCameraHelper: true
+          })
         }
       })
 
       // camera
-      this.cameraOrbit.position.set(0, 5, 20)
+      this.cameraOrbit.position.set(0, 20, 20)
     },
     tick () {
       const elapsedTime = this.clock.getElapsedTime()
@@ -160,7 +188,7 @@ export default defineComponent({
       )
 
       const material = new THREE.MeshStandardMaterial({
-        roughness: 0.7, color: 0xFFFF00, wireframe: true
+        roughness: 0.7, color: '#777777', wireframe: false
       })
 
       const mesh = new THREE.Mesh(geometry, material)

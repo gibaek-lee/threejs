@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { LineSegments } from 'three'
 
 type TShadowSupportLights = THREE.PointLight | THREE.DirectionalLight | THREE.SpotLight
 
@@ -28,26 +29,41 @@ export default function UseShadow ({
 
   recieveMesh.receiveShadow = true
 
-  castMeshs.forEach((m: THREE.Mesh) => { m.castShadow = true })
+  castMeshs.forEach((m: THREE.Mesh) => {
+    if (m.type === 'Group') {
+      m.children.forEach((c: THREE.Object3D) => { c.castShadow = true })
+    } else {
+      m.castShadow = true
+    }
+  })
 
   light.castShadow = true
+
   light.shadow.mapSize.width = 1024
   light.shadow.mapSize.height = 1024
+
   light.shadow.camera.near = 1
-  light.shadow.camera.far = 10
+  light.shadow.camera.far = 40
+
+  if (light.shadow.camera.type === 'OrthographicCamera') {
+    light.shadow.camera.top = 10
+    light.shadow.camera.right = 10
+    light.shadow.camera.bottom = -10
+    light.shadow.camera.left = -10
+  }
+
   // light.shadow.radius = 10 // cheap blur technic, cannot use with THREE.PCFSoftShadowMap
 
-  let pointLightCameraHelper: THREE.CameraHelper | null = null
+  let lightCameraHelper: THREE.CameraHelper | null = null
   if (isUseCameraHelper) {
-    pointLightCameraHelper = new THREE.CameraHelper(light.shadow.camera)
-    pointLightCameraHelper.visible = true
-
-    scene.add(pointLightCameraHelper)
+    lightCameraHelper = new THREE.CameraHelper(light.shadow.camera)
+    lightCameraHelper.visible = true
+    scene.add(lightCameraHelper)
   }
 
   const toggleVisiblePointLightCameraHelper: Function = (): void => {
-    if (!pointLightCameraHelper) { return }
-    pointLightCameraHelper.visible = !pointLightCameraHelper.visible
+    if (!lightCameraHelper) { return }
+    lightCameraHelper.visible = !lightCameraHelper.visible
   }
 
   return {
