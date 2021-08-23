@@ -59,6 +59,18 @@ export default defineComponent({
       iGLTF: null
     }
   },
+  head () {
+    return {
+      title: 'Custom Model Blender',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Import Custom Model using blender & realistic render'
+        }
+      ]
+    }
+  },
   watch: {
     guiParams: {
       deep: true,

@@ -72,6 +72,18 @@ export default defineComponent({
       changeAnimation: null
     }
   },
+  head () {
+    return {
+      title: 'Animate Model Import',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Animate model import, change model animation,  model import composables'
+        }
+      ]
+    }
+  },
   watch: {
     guiParams: {
       deep: true,

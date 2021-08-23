@@ -66,6 +66,18 @@ export default defineComponent({
       debugObject: {}
     }
   },
+  head () {
+    return {
+      title: 'Physics Engine with Web-Worker',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Physics Engine(CANNON.js) test using Web-Worker API'
+        }
+      ]
+    }
+  },
   computed: {
     sphereMeshes () {
       return this.physicsObjects.filter(o => o.geometry.type === 'SphereGeometry')
