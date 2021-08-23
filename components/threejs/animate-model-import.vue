@@ -139,8 +139,8 @@ export default defineComponent({
 
       // models
       UseGLTF({
-        loaderType: E_GLTF.DEFAULT,
-        targetModelPath: '/threejs/models/Fox/glTF/Fox.gltf',
+        loaderType: E_GLTF.DEFAULT, // E_GLTF.DRACO,
+        targetModelPath: '/threejs/models/Fox/glTF/Fox.gltf', // '/threejs/models/hamburger/hamburger.glb'
         successCallback: ({ gltf, animationMixer, changeAnimation }) => {
           this.iGLTF = gltf
           this.iAnimationMixer = animationMixer

@@ -32,9 +32,10 @@ export default function UseGLTF ({
     },
     [E_GLTF.DRACO]: (): Promise<any> => {
       return new Promise((resolve) => {
-        const gltfLoader = new GLTFLoader()
         const dracoLoader = new DRACOLoader()
+        dracoLoader.setDecoderPath('/draco/')
 
+        const gltfLoader = new GLTFLoader()
         gltfLoader.setDRACOLoader(dracoLoader)
 
         resolve(gltfLoader)
