@@ -1,17 +1,5 @@
 <template>
   <v-row :class="`${selectorCanvasWrap}-container`">
-    <v-col class="col-controls">
-      <div class="animation-change-box">
-        <div
-          v-for="(item, index) in ['survey', 'walk', 'run', 'stop']"
-          :key="`${item}_${index}`"
-          :class="`animation-change-box__${item}`"
-          @click="clickAniBtn(index + 1)"
-        >
-          run ani {{ item }}
-        </div>
-      </div>
-    </v-col>
     <v-col
       :class="selectorCanvasWrap"
       class="col-canvas"
@@ -63,13 +51,11 @@ export default defineComponent({
     return {
       idAnimationFrame: null,
       prevTime: 0,
-      selectorCanvasWrap: 'animate-model-import',
+      selectorCanvasWrap: 'custom-model-blender',
       guiParams: {},
       ambientLight: null,
       basePlane: null,
-      iGLTF: null,
-      iAnimationMixer: null,
-      changeAnimation: null
+      iGLTF: null
     }
   },
   watch: {
@@ -77,7 +63,7 @@ export default defineComponent({
       deep: true,
       handler (cur) {
         const {
-          intensityAmbientLight, scalePlane, scaleFox
+          intensityAmbientLight, scalePlane, scaleHamburger
         } = cur
 
         if (intensityAmbientLight) {
@@ -87,8 +73,8 @@ export default defineComponent({
           this.basePlane.scale.set(scalePlane, scalePlane, 1)
         }
         if (this.iGLTF) {
-          if (scaleFox) {
-            this.iGLTF.scene.scale.set(scaleFox, scaleFox, scaleFox)
+          if (scaleHamburger) {
+            this.iGLTF.scene.scale.set(scaleHamburger, scaleHamburger, scaleHamburger)
           }
         }
       }
@@ -108,22 +94,18 @@ export default defineComponent({
     const guiParentNode = document.querySelector(this.gui.parentSelector)
     guiParentNode.appendChild(this.gui.domElement)
     this.gui.destroy()
-
-    this.changeAnimation.destroyClipEvent()
   },
   methods: {
     initUtils () {
       this.guiParams = Object.assign({
         intensityAmbientLight: 0.7,
         scalePlane: 3,
-        scaleFox: 0.1,
-        timeSpeed: 2
+        scaleHamburger: 1
       }, {})
 
       this.gui.add(this.guiParams, 'intensityAmbientLight').min(0).max(1).step(0.01)
       this.gui.add(this.guiParams, 'scalePlane').min(1).max(10).step(1)
-      this.gui.add(this.guiParams, 'scaleFox').min(0.01).max(0.5).step(0.001)
-      this.gui.add(this.guiParams, 'timeSpeed').min(1).max(10).step(0.1)
+      this.gui.add(this.guiParams, 'scaleHamburger').min(0.01).max(0.5).step(0.001)
 
       // lights
       const { ambientLight } = UseAmbientLight(
@@ -139,16 +121,14 @@ export default defineComponent({
 
       // models
       UseGLTF({
-        loaderType: E_GLTF.DEFAULT,
-        targetModelPath: '/threejs/models/Fox/glTF/Fox.gltf',
-        successCallback: ({ gltf, animationMixer, changeAnimation }) => {
+        loaderType: E_GLTF.DRACO,
+        targetModelPath: '/threejs/models/hamburger/hamburger.glb',
+        successCallback: ({ gltf }) => {
           this.iGLTF = gltf
-          this.iAnimationMixer = animationMixer
-          this.changeAnimation = changeAnimation
 
-          const { scaleFox } = this.guiParams
+          const { scaleHamburger } = this.guiParams
 
-          gltf.scene.scale.set(scaleFox, scaleFox, scaleFox)
+          gltf.scene.scale.set(scaleHamburger, scaleHamburger, scaleHamburger)
           gltf.scene.rotateY(Math.PI / 4)
           this.scene.add(gltf.scene)
         }
@@ -163,11 +143,6 @@ export default defineComponent({
       this.prevTime = elapsedTime
 
       this.orbitControl.update()
-
-      // Update animation mixer
-      if (this.iAnimationMixer) {
-        this.iAnimationMixer.update(deltaTime * this.guiParams.timeSpeed)
-      }
 
       this.renderer.render(this.scene, this.cameraOrbit)
 
@@ -193,20 +168,13 @@ export default defineComponent({
       mesh.position.y = 0
 
       return mesh
-    },
-    clickAniBtn (id) {
-      const clipKeys = this.iGLTF.animations.reduce((a, c) => a.concat([c.name]), [])
-      const mapKey = clipKeys[id - 1]
-      const invoker = this.changeAnimation.invokeClipAction[mapKey] || this.changeAnimation.invokeClipAction.stop
-
-      invoker()
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-.animate-model-import-container {
+.custom-model-blender-container {
   height: 100%;
 
   .col-controls {

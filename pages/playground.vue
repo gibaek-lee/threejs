@@ -13,6 +13,7 @@ export default defineComponent({
     'music-visualizer': () => import('~/components/threejs/music-visualizer.vue'),
     'laboratory-webgl': () => import('~/components/threejs/laboratory-webgl.vue'),
     'animate-model-import': () => import('~/components/threejs/animate-model-import.vue'),
+    'custom-model-blender': () => import('~/components/threejs/custom-model-blender.vue'),
     'physics-engine-with-web-worker': () => import('~/components/threejs/physics-engine-with-web-worker.vue')
   },
   head () {
