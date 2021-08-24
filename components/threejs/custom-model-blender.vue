@@ -13,7 +13,7 @@
 import { defineComponent } from '@vue/composition-api'
 import * as THREE from 'three'
 import UseWebgl from '~/composables/threejs'
-import { UseAmbientLight, UseDirectionalLight, UseShadow } from '~/composables/threejs/common/light'
+import { ELights, UseLights, UseShadow } from '~/composables/threejs/common/light'
 import UseGLTF, { E_GLTF } from '~/composables/threejs/common/gltf/UseGLTF'
 
 export default defineComponent({
@@ -125,21 +125,19 @@ export default defineComponent({
       this.gui.add(this.guiParams, 'scalePlane').min(1).max(10).step(1)
       this.gui.add(this.guiParams, 'scaleHamburger').min(0.01).max(2).step(0.001)
 
-      // lights
-      const { ambientLight } = UseAmbientLight(
+      this.ambientLight = UseLights(
         this.scene,
-        { intensity: this.guiParams.intensityAmbientLight }
+        { type: ELights.ambient, intensity: this.guiParams.intensityAmbientLight }
       )
-      this.ambientLight = ambientLight
 
-      const { directionalLight } = UseDirectionalLight(
+      this.directionalLight = UseLights(
         this.scene,
         {
+          type: ELights.directional,
           intensity: this.guiParams.intensityDirectionalLight,
           position3: new THREE.Vector3(-20.25, 10, -20.25)
         }
       )
-      this.directionalLight = directionalLight
 
       // meshes
       const planeWidth = 30

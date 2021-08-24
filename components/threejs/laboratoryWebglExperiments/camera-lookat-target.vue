@@ -1,7 +1,8 @@
 <script>
+import * as THREE from 'three'
 import { defineComponent } from '@vue/composition-api'
 import CoreTemplateExperiment from './core-template-experiment.vue'
-import { UseShadow, UseAmbientLight, UsePointLight } from '~/composables/threejs/common/light'
+import { ELights, UseLights, UseShadow } from '~/composables/threejs/common/light'
 import { UseCameraLookatTarget } from '~/composables/threejs/laboratoryWebgl'
 
 export default defineComponent({
@@ -21,8 +22,8 @@ export default defineComponent({
         material,
         runRotSphereWtCamera
       } = UseCameraLookatTarget(this.scene, this.textureLoader)
-      const { ambientLight } = UseAmbientLight(this.scene)
-      const { pointLight } = UsePointLight({ scene: this.scene })
+      const ambientLight = UseLights(this.scene, { type: ELights.ambient })
+      const pointLight = UseLights(this.scene, { type: ELights.point, position3: new THREE.Vector3(3, 3, 3) })
       const {
         toggleVisiblePointLightCameraHelper
       } = UseShadow({
@@ -35,7 +36,6 @@ export default defineComponent({
       })
 
       this.runComposable = runRotSphereWtCamera
-      pointLight.position.set(3, 3, 3)
 
       this.gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001).name('Intensity Ambient Light')
       this.gui.add(material, 'metalness').min(0).max(1).step(0.001).name('Metalness Material of Meshes')

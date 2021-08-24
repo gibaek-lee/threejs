@@ -22,7 +22,7 @@ import * as THREE from 'three'
 import * as utils from '~/utils/common'
 import UseWebgl from '~/composables/threejs'
 import UseWebWorker from '~/composables/threejs/common/worker/UseWebWorker'
-import { UseAmbientLight, UsePointLight, UseShadow } from '~/composables/threejs/common/light'
+import { ELights, UseLights, UseShadow } from '~/composables/threejs/common/light'
 
 export default defineComponent({
   setup (props, context) {
@@ -178,9 +178,8 @@ export default defineComponent({
 
       this.cameraOrbit.position.set(0, 3, 8)
 
-      const { ambientLight } = UseAmbientLight(this.scene, { intensity: 0.7 })
-      const { pointLight } = UsePointLight({ scene: this.scene })
-      pointLight.position.y = 5
+      const ambientLight = UseLights(this.scene, { type: ELights.ambient, intensity: 0.7 })
+      const pointLight = UseLights(this.scene, { type: ELights.point, position3: new THREE.Vector3(0, 5, 0) })
 
       const {
         toggleVisiblePointLightCameraHelper

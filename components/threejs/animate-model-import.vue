@@ -25,7 +25,7 @@
 import { defineComponent } from '@vue/composition-api'
 import * as THREE from 'three'
 import UseWebgl from '~/composables/threejs'
-import { UseAmbientLight } from '~/composables/threejs/common/light'
+import { ELights, UseLights } from '~/composables/threejs/common/light'
 import UseGLTF, { E_GLTF } from '~/composables/threejs/common/gltf/UseGLTF'
 
 export default defineComponent({
@@ -138,11 +138,10 @@ export default defineComponent({
       this.gui.add(this.guiParams, 'timeSpeed').min(1).max(10).step(0.1)
 
       // lights
-      const { ambientLight } = UseAmbientLight(
+      this.ambientLight = UseLights(
         this.scene,
-        { intensity: this.guiParams.intensityAmbientLight }
+        { type: ELights.ambient, intensity: this.guiParams.intensityAmbientLight }
       )
-      this.ambientLight = ambientLight
 
       // meshes
       const planeWidth = 30

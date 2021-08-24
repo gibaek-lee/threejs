@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { LineSegments } from 'three'
 
 type TShadowSupportLights = THREE.PointLight | THREE.DirectionalLight | THREE.SpotLight
 
@@ -21,12 +20,14 @@ export default function UseShadow ({
   renderer,
   recieveMesh,
   castMeshs,
-  light,
+  light, // todo 현재 단일 광원에 대해서만 shadow 처리 되므로 light[]에 대한 필요가 있을 시 추가
   isUseCameraHelper
 } : IParamUseShadow): IReturnUseShadow {
+  // renderer 세팅
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
+  // mesh 세팅
   recieveMesh.receiveShadow = true
 
   castMeshs.forEach((m: THREE.Mesh) => {
@@ -37,6 +38,7 @@ export default function UseShadow ({
     }
   })
 
+  // light 세팅
   light.castShadow = true
 
   light.shadow.mapSize.width = 1024
@@ -61,6 +63,7 @@ export default function UseShadow ({
     scene.add(lightCameraHelper)
   }
 
+  // public method
   const toggleVisiblePointLightCameraHelper: Function = (): void => {
     if (!lightCameraHelper) { return }
     lightCameraHelper.visible = !lightCameraHelper.visible

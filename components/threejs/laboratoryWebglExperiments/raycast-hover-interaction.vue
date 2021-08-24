@@ -3,7 +3,7 @@ import { defineComponent } from '@vue/composition-api'
 import * as THREE from 'three'
 import CoreTemplateExperiment from './core-template-experiment.vue'
 import { UseRaycaster } from '~/composables/threejs/common/event'
-import { UseShadow, UseAmbientLight, UsePointLight } from '~/composables/threejs/common/light'
+import { ELights, UseLights, UseShadow } from '~/composables/threejs/common/light'
 
 export default defineComponent({
   extends: CoreTemplateExperiment,
@@ -43,9 +43,8 @@ export default defineComponent({
       object3.position.x = 2
       this.raycastTestObjects.push(object1, object2, object3)
 
-      const { ambientLight } = UseAmbientLight(this.scene)
-      const { pointLight } = UsePointLight({ scene: this.scene })
-      pointLight.position.y = 5
+      const ambientLight = UseLights(this.scene, { type: ELights.ambient })
+      const pointLight = UseLights(this.scene, { type: ELights.point, position3: new THREE.Vector3(0, 5, 0) })
 
       const {
         toggleVisiblePointLightCameraHelper
