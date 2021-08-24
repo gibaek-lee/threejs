@@ -89,5 +89,11 @@ sw.*
 # Vim swap files
 *.swp
 
+# Static
+static/audio
+static/cannon/
+static/draco/
+static/models/Fox/
+
 # CANNON worker script
 static/cannon/business/*.js

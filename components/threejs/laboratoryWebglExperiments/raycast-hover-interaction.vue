@@ -10,7 +10,7 @@ export default defineComponent({
   data () {
     return {
       selectorCanvasWrap: 'raycast-hover-interaction',
-      thumbnailSrc: '/threejs/images/thumbnail_normal-vector-directional-transition.png',
+      thumbnailSrc: '/threejs/images/thumbnail_raycast-hover-interaction.png',
       raycasterRender: () => {},
       raycastTestObjects: []
     }
