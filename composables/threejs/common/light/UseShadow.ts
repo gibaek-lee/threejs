@@ -20,34 +20,60 @@ export default function UseShadow ({
   renderer,
   recieveMesh,
   castMeshs,
-  light,
+  light, // todo 현재 단일 광원에 대해서만 shadow 처리 되므로 light[]에 대한 필요가 있을 시 추가
   isUseCameraHelper
 } : IParamUseShadow): IReturnUseShadow {
+  // renderer 세팅
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
-  recieveMesh.receiveShadow = true
-
-  castMeshs.forEach((m: THREE.Mesh) => { m.castShadow = true })
-
-  light.castShadow = true
-  light.shadow.mapSize.width = 1024
-  light.shadow.mapSize.height = 1024
-  light.shadow.camera.near = 1
-  light.shadow.camera.far = 10
-  // light.shadow.radius = 10 // cheap blur technic, cannot use with THREE.PCFSoftShadowMap
-
-  let pointLightCameraHelper: THREE.CameraHelper | null = null
-  if (isUseCameraHelper) {
-    pointLightCameraHelper = new THREE.CameraHelper(light.shadow.camera)
-    pointLightCameraHelper.visible = true
-
-    scene.add(pointLightCameraHelper)
+  // mesh 세팅
+  if (recieveMesh) {
+    recieveMesh.receiveShadow = true
   }
 
+  castMeshs.forEach((m: THREE.Mesh) => {
+    if (m.type === 'Group') {
+      m.children.forEach((c: THREE.Object3D) => {
+        c.castShadow = true
+        c.receiveShadow = true
+      })
+    } else {
+      m.castShadow = true
+    }
+  })
+
+  // light 세팅
+  light.castShadow = true
+
+  light.shadow.mapSize.width = 1024
+  light.shadow.mapSize.height = 1024
+
+  light.shadow.camera.near = 1
+  light.shadow.camera.far = 60
+
+  if (light.shadow.camera.type === 'OrthographicCamera') {
+    light.shadow.camera.top = 10
+    light.shadow.camera.right = 10
+    light.shadow.camera.bottom = -10
+    light.shadow.camera.left = -10
+  }
+
+  light.shadow.normalBias = 0.05
+
+  // light.shadow.radius = 10 // cheap blur technic, cannot use with THREE.PCFSoftShadowMap
+
+  let lightCameraHelper: THREE.CameraHelper | null = null
+  if (isUseCameraHelper) {
+    lightCameraHelper = new THREE.CameraHelper(light.shadow.camera)
+    lightCameraHelper.visible = true
+    scene.add(lightCameraHelper)
+  }
+
+  // public method
   const toggleVisiblePointLightCameraHelper: Function = (): void => {
-    if (!pointLightCameraHelper) { return }
-    pointLightCameraHelper.visible = !pointLightCameraHelper.visible
+    if (!lightCameraHelper) { return }
+    lightCameraHelper.visible = !lightCameraHelper.visible
   }
 
   return {

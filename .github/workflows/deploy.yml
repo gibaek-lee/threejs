@@ -1,0 +1,55 @@
+name: Deploy Three.js playground
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github actions start to deploy
+        run: |
+          echo "The job was automatically triggered by a ${{ github.event_name }} event."
+          echo "This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+          echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        timeout-minutes: 10
+
+      - name: Checkout complete
+        run: |
+          echo "The ${{ github.repository }} repository has been cloned to the runner."
+          echo "The workflow is now ready to generate code on the runner."
+
+      - name: Install NPM
+        run: |
+          npm i
+          echo "NPM install finished"
+        timeout-minutes: 20
+
+      - name: Copy cannon & draco lib to static folder from node_modules
+        run: |
+          cp -R node_modules/cannon/build static/cannon
+          cp -R node_modules/three/examples/js/libs/draco static
+          echo "Copy modules cannon & draco finished"
+        timeout-minutes: 10
+
+      - name: Compile TypeScript cannon business logic
+        run: |
+          npm run compile:ts_cannon
+          echo "Finish compile ts cannon business logic"
+        timeout-minutes: 10
+
+      - name: Generate Nuxt
+        timeout-minutes: 10
+        run: npm run generate
+
+      - name: Deploy /dist to github pages
+        timeout-minutes: 10
+        run: npm run deploy
+
+      - name: Finish alert
+        run: echo "Finish deployment. This job's status is ${{ job.status }}."

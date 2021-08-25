@@ -62,6 +62,18 @@ export default defineComponent({
       guiParams: {}
     }
   },
+  head () {
+    return {
+      title: 'Component Title',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'describe about component'
+        }
+      ]
+    }
+  },
   watch: {
     guiParams: {
       deep: true,

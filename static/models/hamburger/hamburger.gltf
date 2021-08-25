@@ -1,0 +1,343 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.6.16",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0,
+                1,
+                2,
+                3
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Cube",
+            "scale" : [
+                2.8327412605285645,
+                2.8327412605285645,
+                2.8327412605285645
+            ],
+            "translation" : [
+                -0.004178685136139393,
+                -2.237004518508911,
+                -0.00011678120790747926
+            ]
+        },
+        {
+            "mesh" : 1,
+            "name" : "Cube.001",
+            "scale" : [
+                2.8327412605285645,
+                2.8327412605285645,
+                2.8327412605285645
+            ],
+            "translation" : [
+                0.018133103847503662,
+                2.7686448097229004,
+                -0.026421930640935898
+            ]
+        },
+        {
+            "mesh" : 2,
+            "name" : "Plane",
+            "scale" : [
+                5.368608474731445,
+                5.368608474731445,
+                5.368608474731445
+            ],
+            "translation" : [
+                0,
+                3.2274749279022217,
+                0
+            ]
+        },
+        {
+            "mesh" : 3,
+            "name" : "Cylinder",
+            "scale" : [
+                5.977694988250732,
+                -0.8899819850921631,
+                5.977694988250732
+            ],
+            "translation" : [
+                0.003202306106686592,
+                2.295898199081421,
+                -0.010524636134505272
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "name" : "bunMaterial",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.8000000715255737,
+                    0.23204131424427032,
+                    0.007374560926109552,
+                    1
+                ],
+                "metallicFactor" : 0
+            }
+        },
+        {
+            "doubleSided" : true,
+            "name" : "cheeze",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.8000000715255737,
+                    0.5085299611091614,
+                    0.11630237102508545,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.2567567527294159
+            }
+        },
+        {
+            "doubleSided" : true,
+            "name" : "meet",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.8000000715255737,
+                    0.2354993224143982,
+                    0.06066145375370979,
+                    1
+                ],
+                "metallicFactor" : 0
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Cube.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1
+                    },
+                    "indices" : 2,
+                    "material" : 0
+                }
+            ]
+        },
+        {
+            "name" : "Cube.004",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 3,
+                        "NORMAL" : 4
+                    },
+                    "indices" : 2,
+                    "material" : 0
+                }
+            ]
+        },
+        {
+            "name" : "Plane",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 5,
+                        "NORMAL" : 6
+                    },
+                    "indices" : 7,
+                    "material" : 1
+                }
+            ]
+        },
+        {
+            "name" : "Cylinder",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 8,
+                        "NORMAL" : 9
+                    },
+                    "indices" : 10,
+                    "material" : 2
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 3586,
+            "max" : [
+                1.631959080696106,
+                1.3802099227905273,
+                1.631959080696106
+            ],
+            "min" : [
+                -1.631959080696106,
+                0.03175591304898262,
+                -1.631959080696106
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 3586,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5123,
+            "count" : 21504,
+            "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5126,
+            "count" : 3586,
+            "max" : [
+                1.631959080696106,
+                1.3802095651626587,
+                1.631959080696106
+            ],
+            "min" : [
+                -1.631959080696106,
+                0.03175592049956322,
+                -1.631959080696106
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5126,
+            "count" : 3586,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 5,
+            "componentType" : 5126,
+            "count" : 578,
+            "max" : [
+                1,
+                0,
+                1
+            ],
+            "min" : [
+                -1,
+                -0.3659666180610657,
+                -1
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 6,
+            "componentType" : 5126,
+            "count" : 578,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 7,
+            "componentType" : 5123,
+            "count" : 3456,
+            "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 8,
+            "componentType" : 5126,
+            "count" : 194,
+            "max" : [
+                0.941037118434906,
+                1.4712398052215576,
+                0.941037118434906
+            ],
+            "min" : [
+                -0.941037118434906,
+                -0.8515868186950684,
+                -0.941037118434906
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 9,
+            "componentType" : 5126,
+            "count" : 194,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 10,
+            "componentType" : 5123,
+            "count" : 1152,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 43032,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 43032,
+            "byteOffset" : 43032
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 43008,
+            "byteOffset" : 86064
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 43032,
+            "byteOffset" : 129072
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 43032,
+            "byteOffset" : 172104
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 6936,
+            "byteOffset" : 215136
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 6936,
+            "byteOffset" : 222072
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 6912,
+            "byteOffset" : 229008
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 2328,
+            "byteOffset" : 235920
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 2328,
+            "byteOffset" : 238248
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 2304,
+            "byteOffset" : 240576
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 242880,
+            "uri" : "hamburger.bin"
+        }
+    ]
+}

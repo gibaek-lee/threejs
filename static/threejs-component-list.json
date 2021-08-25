@@ -18,6 +18,12 @@
     "icon": "mdi-call-split"
   },
   {
+    "id": "custom-model-blender",
+    "langset": "Custom Model Blender",
+    "path": "/playground/custom-model-blender",
+    "icon": "mdi-domain"
+  },
+  {
     "id": "physics-engine-with-web-worker",
     "langset": "Physics Engine with Web Worker",
     "path": "/playground/physics-engine-with-web-worker",
