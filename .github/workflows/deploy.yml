@@ -18,6 +18,8 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
         timeout-minutes: 10
+
+      - name: Checkout complete
         run: |
           echo "The ${{ github.repository }} repository has been cloned to the runner."
           echo "The workflow is now ready to generate code on the runner."
