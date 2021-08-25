@@ -190,13 +190,12 @@ export default defineComponent({
 
       // environment map
       const cubeTextureLoader = new THREE.CubeTextureLoader()
+      const baseDomain = document.location.origin
+      const textureBaseUrl = `${baseDomain}/threejs/textures/environmentMap`
       this.environmentMap = cubeTextureLoader.load([
-        '/textures/environmentMap/px.jpg',
-        '/textures/environmentMap/nx.jpg',
-        '/textures/environmentMap/py.jpg',
-        '/textures/environmentMap/ny.jpg',
-        '/textures/environmentMap/pz.jpg',
-        '/textures/environmentMap/nz.jpg'
+        `${textureBaseUrl}/px.jpg`, `${textureBaseUrl}/nx.jpg`,
+        `${textureBaseUrl}/py.jpg`, `${textureBaseUrl}/ny.jpg`,
+        `${textureBaseUrl}/pz.jpg`, `${textureBaseUrl}/nz.jpg`
       ])
       this.environmentMap.encoding = THREE.sRGBEncoding
       this.scene.background = this.environmentMap
