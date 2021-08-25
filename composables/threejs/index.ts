@@ -19,10 +19,12 @@ export interface IExtendDatGui extends dat.GUI {
 
 export default function UseWebgl ({
   context,
-  isOrbitControl = false
+  isOrbitControl = false,
+  isPhysicallyCorrectLight = false
 } : {
   context: SetupContext,
-  isOrbitControl: boolean
+  isOrbitControl: boolean,
+  isPhysicallyCorrectLight: boolean
 }) {
   const gui: Ref<IExtendDatGui | null> = ref(null)
   const scene: Ref<THREE.Scene | null> = ref(null)
@@ -93,10 +95,14 @@ export default function UseWebgl ({
 
     textureLoader.value = new THREE.TextureLoader()
 
-    renderer.value = new THREE.WebGLRenderer({ canvas: canvas.value })
+    renderer.value = new THREE.WebGLRenderer({
+      canvas: canvas.value,
+      antialias: true
+    })
     renderer.value.setSize(windowSizes.value.width, windowSizes.value.height)
     renderer.value.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.value.setClearColor('#262837')
+    renderer.value.physicallyCorrectLights = isPhysicallyCorrectLight
 
     if (isOrbitControl) {
       orbitControl.value = new OrbitControls(cameraOrbit.value, canvas.value)

@@ -89,5 +89,12 @@ sw.*
 # Vim swap files
 *.swp
 
+# Static
+# static asset들은 node_modules에서 카피해온 것이므로 코드 형상관리에는 불필요하다.
+# github action에서 빌드시점 전에 static 폴더에 카피하여 사용
+static/cannon/build/
+static/draco/
+
 # CANNON worker script
+# ts 파일을 compile하여 만들어내므로 결과물인 js는 불필요
 static/cannon/business/*.js

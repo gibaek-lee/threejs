@@ -2,7 +2,7 @@
 import { defineComponent } from '@vue/composition-api'
 import * as THREE from 'three'
 import CoreTemplateExperiment from './core-template-experiment.vue'
-import { UseShadow, UseAmbientLight, UsePointLight } from '~/composables/threejs/common/light'
+import { ELights, UseLights, UseShadow } from '~/composables/threejs/common/light'
 import { EScreenMode, UsePointerLockControls } from '~/composables/threejs/common/controls'
 import { UseRaycaster } from '~/composables/threejs/common/event'
 
@@ -79,9 +79,8 @@ export default defineComponent({
       this.axesHelper.position.set(0, plane.position.y + 0.001, 0)
       this.scene.add(plane, ...this.raycastTestObjects, this.axesHelper)
 
-      const { ambientLight } = UseAmbientLight(this.scene)
-      const { pointLight } = UsePointLight({ scene: this.scene })
-      pointLight.position.y = 5
+      const ambientLight = UseLights(this.scene, { type: ELights.ambient })
+      const pointLight = UseLights(this.scene, { type: ELights.point, position3: new THREE.Vector3(0, 5, 0) })
 
       const {
         toggleVisiblePointLightCameraHelper
