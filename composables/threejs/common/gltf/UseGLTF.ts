@@ -33,7 +33,9 @@ export default function UseGLTF ({
     [E_GLTF.DRACO]: (): Promise<any> => {
       return new Promise((resolve) => {
         const dracoLoader = new DRACOLoader()
-        dracoLoader.setDecoderPath('/draco/')
+
+        const baseDomain = document.location.origin
+        dracoLoader.setDecoderPath(`${baseDomain}/threejs/draco/`)
 
         const gltfLoader = new GLTFLoader()
         gltfLoader.setDRACOLoader(dracoLoader)
