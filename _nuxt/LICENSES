@@ -26,6 +26,13 @@ PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 
 
+/**
+ * @license
+ * Copyright 2010-2021 Three.js Authors
+ * SPDX-License-Identifier: MIT
+ */
+
+
 /*!
   * vue-router v3.5.2
   * (c) 2021 Evan You
@@ -42,11 +49,4 @@ PERFORMANCE OF THIS SOFTWARE.
  * vuex v3.6.2
  * (c) 2021 Evan You
  * @license MIT
- */
-
-
-/**
- * @license
- * Copyright 2010-2021 Three.js Authors
- * SPDX-License-Identifier: MIT
  */
