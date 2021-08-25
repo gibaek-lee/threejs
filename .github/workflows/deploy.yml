@@ -48,8 +48,11 @@ jobs:
         run: npm run generate
 
       - name: Deploy /dist to github pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: dist
         timeout-minutes: 10
-        run: npm run deploy
 
       - name: Finish alert
         run: echo "Finish deployment. This job's status is ${{ job.status }}."
