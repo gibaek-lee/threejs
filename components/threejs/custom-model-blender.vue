@@ -31,7 +31,8 @@ export default defineComponent({
       clock
     } = UseWebgl({
       context,
-      isOrbitControl: true
+      isOrbitControl: true,
+      isPhysicallyCorrectLight: true
     })
 
     return {
@@ -55,8 +56,8 @@ export default defineComponent({
       guiParams: {},
       ambientLight: null,
       directionalLight: null,
-      basePlane: null,
-      iGLTF: null
+      iGLTF: null,
+      environmentMap: null
     }
   },
   head () {
@@ -74,9 +75,15 @@ export default defineComponent({
   watch: {
     guiParams: {
       deep: true,
-      handler (cur) {
+      handler (cur, prev) {
         const {
-          intensityAmbientLight, intensityDirectionalLight, scalePlane, scaleHamburger
+          intensityAmbientLight,
+          intensityDirectionalLight,
+          positionDirectionalLight,
+          scaleHamburger,
+          rotateYHamburger,
+          envMapIntensity,
+          toneMappingExposure
         } = cur
 
         if (intensityAmbientLight) {
@@ -85,13 +92,26 @@ export default defineComponent({
         if (intensityDirectionalLight) {
           this.directionalLight.intensity = intensityDirectionalLight
         }
-        if (scalePlane) {
-          this.basePlane.scale.set(scalePlane, scalePlane, 1)
+        if (positionDirectionalLight) {
+          const { x, y, z } = positionDirectionalLight
+          this.directionalLight.position.set(x, y, z)
         }
         if (this.iGLTF) {
           if (scaleHamburger) {
             this.iGLTF.scene.scale.set(scaleHamburger, scaleHamburger, scaleHamburger)
           }
+          if (rotateYHamburger) {
+            this.iGLTF.scene.rotation.y = rotateYHamburger
+          }
+          if (envMapIntensity) {
+            this.updateAllMeshes({
+              envMap: this.environmentMap,
+              envMapIntensity
+            })
+          }
+        }
+        if (toneMappingExposure) {
+          this.renderer.toneMappingExposure = toneMappingExposure
         }
       }
     }
@@ -113,18 +133,42 @@ export default defineComponent({
   },
   methods: {
     initUtils () {
+      // gui control
       this.guiParams = Object.assign({
-        intensityAmbientLight: 0.3,
-        intensityDirectionalLight: 0.7,
-        scalePlane: 3,
-        scaleHamburger: 1
+        intensityAmbientLight: 1,
+        intensityDirectionalLight: 1,
+        positionDirectionalLight: { x: -20.25, y: 10, z: -20.25 },
+        scaleHamburger: 1,
+        rotateYHamburger: Math.PI * 0.25, // degree
+        envMapIntensity: 7,
+        toneMapping: 3,
+        toneMappingExposure: 3
       }, {})
 
       this.gui.add(this.guiParams, 'intensityAmbientLight').min(0).max(1).step(0.01)
       this.gui.add(this.guiParams, 'intensityDirectionalLight').min(0).max(1).step(0.01)
-      this.gui.add(this.guiParams, 'scalePlane').min(1).max(10).step(1)
+      this.gui.add(this.guiParams.positionDirectionalLight, 'x').min(-25).max(25).step(0.01).name('lightX')
+      this.gui.add(this.guiParams.positionDirectionalLight, 'y').min(0).max(10).step(0.01).name('lightY')
+      this.gui.add(this.guiParams.positionDirectionalLight, 'z').min(-25).max(25).step(0.01).name('lightZ')
       this.gui.add(this.guiParams, 'scaleHamburger').min(0.01).max(2).step(0.001)
+      this.gui.add(this.guiParams, 'rotateYHamburger').min(-Math.PI).max(Math.PI).step(0.001)
+      this.gui.add(this.guiParams, 'envMapIntensity').min(0).max(10).step(0.001)
+      this.gui.add(this.guiParams, 'toneMapping', {
+        No: THREE.NoToneMapping,
+        Linear: THREE.LinearToneMapping,
+        Reinhard: THREE.ReinhardToneMapping,
+        Cineon: THREE.CineonToneMapping,
+        ACESFilmic: THREE.ACESFilmicToneMapping
+      }).onFinishChange(() => {
+        this.renderer.toneMapping = Number(this.guiParams.toneMapping)
+        this.updateAllMeshes({
+          envMap: this.environmentMap,
+          envMapIntensity: this.guiParams.envMapIntensity
+        })
+      })
+      this.gui.add(this.guiParams, 'toneMappingExposure').min(0).max(10).step(0.001)
 
+      // lights
       this.ambientLight = UseLights(
         this.scene,
         { type: ELights.ambient, intensity: this.guiParams.intensityAmbientLight }
@@ -135,14 +179,28 @@ export default defineComponent({
         {
           type: ELights.directional,
           intensity: this.guiParams.intensityDirectionalLight,
-          position3: new THREE.Vector3(-20.25, 10, -20.25)
+          position3: this.guiParams.positionDirectionalLIght
         }
       )
 
-      // meshes
-      const planeWidth = 30
-      this.basePlane = this.makeBasePlane(planeWidth)
-      this.scene.add(this.basePlane)
+      // renderer
+      this.renderer.outputEncoding = THREE.sRGBEncoding
+      this.renderer.toneMapping = this.guiParams.toneMapping
+      this.renderer.toneMappingExposure = this.guiParams.toneMappingExposure
+
+      // environment map
+      const cubeTextureLoader = new THREE.CubeTextureLoader()
+      this.environmentMap = cubeTextureLoader.load([
+        '/textures/environmentMap/px.jpg',
+        '/textures/environmentMap/nx.jpg',
+        '/textures/environmentMap/py.jpg',
+        '/textures/environmentMap/ny.jpg',
+        '/textures/environmentMap/pz.jpg',
+        '/textures/environmentMap/nz.jpg'
+      ])
+      this.environmentMap.encoding = THREE.sRGBEncoding
+      this.scene.background = this.environmentMap
+      this.scene.environment = this.environmentMap
 
       // models
       UseGLTF({
@@ -155,8 +213,14 @@ export default defineComponent({
 
           gltf.scene.scale.set(scaleHamburger, scaleHamburger, scaleHamburger)
           gltf.scene.position.y = 2
-          gltf.scene.rotateY(Math.PI / 4)
+          gltf.scene.rotation.y = this.guiParams.rotateYHamburger
           this.scene.add(gltf.scene)
+
+          // environment
+          this.updateAllMeshes({
+            envMap: this.environmentMap,
+            envMapIntensity: this.guiParams.envMapIntensity
+          })
 
           // shadow
           const {
@@ -164,7 +228,6 @@ export default defineComponent({
           } = UseShadow({
             scene: this.scene,
             renderer: this.renderer,
-            recieveMesh: this.basePlane,
             castMeshs: [this.iGLTF.scene],
             light: this.directionalLight,
             isUseCameraHelper: true
@@ -190,22 +253,13 @@ export default defineComponent({
       this.gui.domElement.style.cssText += 'position: absolute; right: 0px; top: 0px;'
       this.$el.querySelector(`.${this.selectorCanvasWrap}`).appendChild(this.gui.domElement)
     },
-    makeBasePlane (width = 10) {
-      const SEGMENT_FLOOR = 10
-      const geometry = new THREE.PlaneGeometry(
-        width, width,
-        SEGMENT_FLOOR, SEGMENT_FLOOR
-      )
-
-      const material = new THREE.MeshStandardMaterial({
-        roughness: 0.7, color: '#777777', wireframe: false
+    updateAllMeshes ({ envMap, envMapIntensity }) {
+      this.scene.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
+          child.material.envMap = envMap
+          child.material.envMapIntensity = envMapIntensity
+        }
       })
-
-      const mesh = new THREE.Mesh(geometry, material)
-      mesh.rotation.x = -Math.PI * 0.5
-      mesh.position.y = 0
-
-      return mesh
     }
   }
 })

@@ -28,11 +28,16 @@ export default function UseShadow ({
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
   // mesh 세팅
-  recieveMesh.receiveShadow = true
+  if (recieveMesh) {
+    recieveMesh.receiveShadow = true
+  }
 
   castMeshs.forEach((m: THREE.Mesh) => {
     if (m.type === 'Group') {
-      m.children.forEach((c: THREE.Object3D) => { c.castShadow = true })
+      m.children.forEach((c: THREE.Object3D) => {
+        c.castShadow = true
+        c.receiveShadow = true
+      })
     } else {
       m.castShadow = true
     }
@@ -45,7 +50,7 @@ export default function UseShadow ({
   light.shadow.mapSize.height = 1024
 
   light.shadow.camera.near = 1
-  light.shadow.camera.far = 40
+  light.shadow.camera.far = 60
 
   if (light.shadow.camera.type === 'OrthographicCamera') {
     light.shadow.camera.top = 10
@@ -53,6 +58,8 @@ export default function UseShadow ({
     light.shadow.camera.bottom = -10
     light.shadow.camera.left = -10
   }
+
+  light.shadow.normalBias = 0.05
 
   // light.shadow.radius = 10 // cheap blur technic, cannot use with THREE.PCFSoftShadowMap
 
