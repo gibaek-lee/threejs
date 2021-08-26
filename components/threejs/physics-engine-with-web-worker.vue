@@ -211,7 +211,7 @@ export default defineComponent({
 
       // thread processing speed adjustment
       let delay = this.iComposeWorker.dt * 1000 - (Date.now() - this.iComposeWorker.sendTime)
-      if (delay > 0) {
+      if (delay < 0) {
         delay = 0
       }
 

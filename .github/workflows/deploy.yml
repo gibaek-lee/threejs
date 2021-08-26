@@ -32,9 +32,8 @@ jobs:
 
       - name: Copy cannon & draco lib to static folder from node_modules
         run: |
-          cp -R node_modules/cannon/build static/cannon
-          cp -R node_modules/three/examples/js/libs/draco static
-          echo "Copy modules cannon & draco finished"
+          npm run copy:lib_modules
+          echo "Copy lib modules cannon & draco finished"
         timeout-minutes: 10
 
       - name: Compile TypeScript cannon business logic
