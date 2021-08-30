@@ -30,6 +30,12 @@
     "icon": "mdi-wrench"
   },
   {
+    "id": "shader-basic",
+    "langset": "Vertext and Fragment Shader using glsl",
+    "path": "/playground/shader-basic",
+    "icon": "mdi-thumb-up"
+  },
+  {
     "id": "laboratory-webgl",
     "langset": "Laboratory Webgl",
     "path": "/playground/laboratory-webgl",
