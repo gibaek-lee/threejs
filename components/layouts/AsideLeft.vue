@@ -49,6 +49,8 @@ export default defineComponent({
   computed: {
     pathList () {
       const threejsComponentList = JSON.parse(JSON.stringify(ThreejsComponentListJson))
+
+      // todoc Material Design Icons - https://fonts.google.com/icons?selected=Material+Icons
       const itemList = [{ icon: 'mdi-apps', title: 'Welcome', to: '/' }]
 
       return threejsComponentList

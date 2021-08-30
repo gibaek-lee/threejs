@@ -14,6 +14,7 @@ export default defineComponent({
     'laboratory-webgl': () => import('~/components/threejs/laboratory-webgl.vue'),
     'animate-model-import': () => import('~/components/threejs/animate-model-import.vue'),
     'custom-model-blender': () => import('~/components/threejs/custom-model-blender.vue'),
+    'shader-basic': () => import('~/components/threejs/shader-basic.vue'),
     'physics-engine-with-web-worker': () => import('~/components/threejs/physics-engine-with-web-worker.vue')
   },
   head () {
