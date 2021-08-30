@@ -53,6 +53,15 @@ export default {
     '@nuxtjs/vuetify', // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/composition-api/module'
   ],
+  build: {
+    extend (config, { isDev, isClient }) {
+      config.module.rules.push({ // for Shaders
+        test: /\.(glsl|vs|fs|vert|frag)$/,
+        exclude: /node_modules/,
+        use: ['raw-loader'] // https://v4.webpack.js.org/loaders/raw-loader/
+      })
+    }
+  },
   modules: [ // Modules: https://go.nuxtjs.dev/config-modules
     '@nuxtjs/axios' // https://go.nuxtjs.dev/axios
   ],
